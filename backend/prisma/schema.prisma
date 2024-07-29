@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,19 +8,20 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
-  password String
-  wallet   Wallet?
-  assets   Asset[]
-  cart     Cart?
+  id          Int           @id @default(autoincrement())
+  email       String        @unique
+  password    String
+  wallet      Wallet?
+  assets      Asset[]
+  cart        Cart?
+  Transaction Transaction[]
 }
 
 model Wallet {
   id      Int    @id @default(autoincrement())
   address String @unique
-  userId  Int    @unique
   user    User   @relation(fields: [userId], references: [id])
+  userId  Int    @unique
 }
 
 model Asset {
@@ -35,23 +30,43 @@ model Asset {
   description String
   price       Float
   category    String
-  images      String
-  userId      Int
+  images      Image[]
   user        User       @relation(fields: [userId], references: [id])
-  CartItem    CartItem[]
+  userId      Int
+  cartItems   CartItem[]
+}
+
+model Image {
+  id      Int    @id @default(autoincrement())
+  url     String
+  asset   Asset  @relation(fields: [assetId], references: [id])
+  assetId Int
 }
 
 model Cart {
-  id     Int        @id @default(autoincrement())
-  userId Int        @unique
-  user   User       @relation(fields: [userId], references: [id])
-  items  CartItem[]
+  id          Int           @id @default(autoincrement())
+  user        User          @relation(fields: [userId], references: [id])
+  userId      Int           @unique
+  cartItems   CartItem[]
+  totalPrice  Float         @default(0.0)
+  Transaction Transaction[]
 }
 
 model CartItem {
   id      Int   @id @default(autoincrement())
-  assetId Int
+  cart    Cart  @relation(fields: [cartId], references: [id])
   cartId  Int
   asset   Asset @relation(fields: [assetId], references: [id])
-  cart    Cart  @relation(fields: [cartId], references: [id])
+  assetId Int
+}
+
+model Transaction {
+  id            Int      @id @default(autoincrement())
+  user          User     @relation(fields: [userId], references: [id])
+  userId        Int
+  cart          Cart     @relation(fields: [cartId], references: [id])
+  cartId        Int
+  transactionId String   @unique
+  status        String
+  createdAt     DateTime @default(now())
 }
