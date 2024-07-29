@@ -1,26 +1,59 @@
-import { Injectable } from '@nestjs/common';
-import { CreateWalletDto } from './dto/create-wallet.dto';
-import { UpdateWalletDto } from './dto/update-wallet.dto';
+import {
+  BadGatewayException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { DatabaseService } from 'src/database/database.service';
+import { ConnectWalletDto } from './dto/connect-wallet.dto';
 
 @Injectable()
 export class WalletService {
-  create(createWalletDto: CreateWalletDto) {
-    return 'This action adds a new wallet';
-  }
+  constructor(private readonly dataservice: DatabaseService) {}
 
-  findAll() {
-    return `This action returns all wallet`;
-  }
+  async connectWallet(connectWalletDto: ConnectWalletDto) {
+    const { userId, walletAddress } = connectWalletDto;
 
-  findOne(id: number) {
-    return `This action returns a #${id} wallet`;
-  }
+    // Check if user exists
+    const user = await this.dataservice.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
 
-  update(id: number, updateWalletDto: UpdateWalletDto) {
-    return `This action updates a #${id} wallet`;
-  }
+    // Check if wallet address already exists
+    const existingWallet = await this.dataservice.wallet.findFirst({
+      where: {
+        address: walletAddress,
+      },
+    });
+    if (existingWallet) {
+      throw new BadGatewayException('Wallet address already connected');
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} wallet`;
+    // Check if the user already has a connected wallet
+    const userWallet = await this.dataservice.wallet.findFirst({
+      where: {
+        userId: userId,
+      },
+    });
+    if (userWallet) {
+      throw new BadGatewayException('User already has a connected wallet');
+    }
+
+    // Connect the wallet
+    const wallet = await this.dataservice.wallet.create({
+      data: {
+        userId: userId,
+        address: walletAddress,
+      },
+    });
+
+    return {
+      walletId: wallet.id,
+      status: 'Wallet connected successfully',
+    };
   }
 }
