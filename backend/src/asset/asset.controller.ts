@@ -1,34 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+// AssetController
+import { Controller, Post, Get, Body, Query } from '@nestjs/common';
 import { AssetService } from './asset.service';
 import { CreateAssetDto } from './dto/create-asset.dto';
-import { UpdateAssetDto } from './dto/update-asset.dto';
+import { BrowseAssetsDto } from './dto/browse-asset.dto';
+import { AssetDetailsDto } from './dto/asset-details.dto';
 
 @Controller('asset')
 export class AssetController {
   constructor(private readonly assetService: AssetService) {}
 
-  @Post()
-  create(@Body() createAssetDto: CreateAssetDto) {
-    return this.assetService.create(createAssetDto);
+  @Post('list')
+  async listAsset(@Body() createAssetDto: CreateAssetDto) {
+    try {
+      return await this.assetService.createAsset(createAssetDto);
+    } catch (error) {
+      throw new Error(`Error creating asset: ${error.message}`);
+    }
   }
 
-  @Get()
-  findAll() {
-    return this.assetService.findAll();
+  @Get('browse')
+  async browseAssets(@Query() filters: BrowseAssetsDto) {
+    try {
+      return await this.assetService.browseAssets(filters);
+    } catch (error) {
+      throw new Error(`Error browsing assets: ${error.message}`);
+    }
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.assetService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAssetDto: UpdateAssetDto) {
-    return this.assetService.update(+id, updateAssetDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.assetService.remove(+id);
+  @Get('details')
+  async getAssetDetails(@Query() assetDetailsDto: AssetDetailsDto) {
+    try {
+      return await this.assetService.getAssetDetails(assetDetailsDto);
+    } catch (error) {
+      throw new Error(`Error getting asset details: ${error.message}`);
+    }
   }
 }
