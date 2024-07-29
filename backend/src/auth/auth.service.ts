@@ -30,8 +30,10 @@ export class AuthService {
     if (!validatePassword) {
       throw new NotFoundException('Wrong Password');
     }
+    const token = this.jwtservice.sign({ id: user.id, email: user.email });
     return {
-      token: this.jwtservice.sign({ email }),
+      userID: user.id,
+      token,
     };
   }
 
@@ -45,7 +47,14 @@ export class AuthService {
       throw new BadGatewayException('User with this email already exists');
     }
     registerData.password = await bcrypt.hash(registerData.password, 10);
-    const res = await this.dataservice.user.create({ data: registerData });
-    return res;
+    const newUser = await this.dataservice.user.create({ data: registerData });
+    const token = this.jwtservice.sign({
+      id: newUser.id,
+      email: newUser.email,
+    });
+    return {
+      userId: newUser.id,
+      token,
+    };
   }
 }
