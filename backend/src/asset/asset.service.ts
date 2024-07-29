@@ -1,26 +1,105 @@
-import { Injectable } from '@nestjs/common';
+// AssetService
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
+
 import { CreateAssetDto } from './dto/create-asset.dto';
-import { UpdateAssetDto } from './dto/update-asset.dto';
+import { BrowseAssetsDto } from './dto/browse-asset.dto';
+import { AssetDetailsDto } from './dto/asset-details.dto';
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class AssetService {
-  create(createAssetDto: CreateAssetDto) {
-    return 'This action adds a new asset';
+  constructor(private readonly dataservice: DatabaseService) {}
+
+  async createAsset(createAssetDto: CreateAssetDto) {
+    const { userId, assetName, description, price, category, images } =
+      createAssetDto;
+
+    try {
+      const asset = await this.dataservice.asset.create({
+        data: {
+          name: assetName,
+          description,
+          price,
+          category,
+          userId,
+          images: {
+            create: images.map((url) => ({ url })),
+          },
+        },
+      });
+
+      return { assetId: asset.id, status: 'success' };
+    } catch (error) {
+      throw new BadRequestException(`Failed to create asset: ${error.message}`);
+    }
   }
 
-  findAll() {
-    return `This action returns all asset`;
+  async browseAssets(filters: BrowseAssetsDto) {
+    const { category, priceRange } = filters;
+    const [minPrice, maxPrice] = priceRange
+      ? priceRange.split('-').map(Number)
+      : [0, Infinity];
+
+    try {
+      const assets = await this.dataservice.asset.findMany({
+        where: {
+          category: category || undefined,
+          price: {
+            gte: minPrice,
+            lte: maxPrice,
+          },
+        },
+        include: {
+          images: true,
+        },
+      });
+
+      return {
+        assets: assets.map((asset) => ({
+          assetId: asset.id,
+          assetName: asset.name,
+          description: asset.description,
+          price: asset.price,
+          category: asset.category,
+          thumbnail: asset.images.length > 0 ? asset.images[0].url : null,
+        })),
+      };
+    } catch (error) {
+      throw new BadRequestException(
+        `Failed to browse assets: ${error.message}`,
+      );
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} asset`;
-  }
+  async getAssetDetails(assetDetailsDto: AssetDetailsDto) {
+    const { assetId } = assetDetailsDto;
 
-  update(id: number, updateAssetDto: UpdateAssetDto) {
-    return `This action updates a #${id} asset`;
-  }
+    try {
+      const asset = await this.dataservice.asset.findUnique({
+        where: { id: assetId },
+        include: { images: true },
+      });
 
-  remove(id: number) {
-    return `This action removes a #${id} asset`;
+      if (!asset) {
+        throw new NotFoundException('Asset not found');
+      }
+
+      return {
+        assetId: asset.id,
+        assetName: asset.name,
+        description: asset.description,
+        price: asset.price,
+        category: asset.category,
+        images: asset.images.map((image) => image.url),
+      };
+    } catch (error) {
+      throw new BadRequestException(
+        `Failed to get asset details: ${error.message}`,
+      );
+    }
   }
 }
