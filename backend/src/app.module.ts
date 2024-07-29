@@ -6,9 +6,10 @@ import { AuthModule } from './auth/auth.module';
 import { AssetModule } from './asset/asset.module';
 import { CartModule } from './cart/cart.module';
 import { UserModule } from './user/user.module';
+import { WalletModule } from './wallet/wallet.module';
 
 @Module({
-  imports: [DatabaseModule, AuthModule, AssetModule, CartModule, UserModule],
+  imports: [DatabaseModule, AuthModule, AssetModule, CartModule, UserModule, WalletModule],
   controllers: [AppController],
   providers: [AppService],
 })
