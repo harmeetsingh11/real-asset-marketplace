@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCartItemDto } from './dto/create-cart.dto';
 import { CheckoutCartDto } from './dto/checkout-cart.dto';
 import { DatabaseService } from 'src/database/database.service';
@@ -113,36 +117,51 @@ export class CartService {
     // Validate cart existence
     const cart = await this.databaseService.cart.findUnique({
       where: { id: cartId },
-      include: { user: true, cartItems: true },
+      include: { cartItems: true },
     });
 
     if (!cart || cart.userId !== userId) {
       throw new NotFoundException('Cart not found or access denied');
     }
 
-    // Create a transaction
-    const transaction = await this.databaseService.transaction.create({
-      data: {
-        user: { connect: { id: userId } },
-        cart: { connect: { id: cartId } },
-        transactionId: `txn_${Date.now()}`,
-        status: 'Completed',
-      },
-    });
+    // Check if the cart is empty
+    if (cart.cartItems.length === 0) {
+      return {
+        message:
+          'There are no items in your cart. Please add items to the cart before proceeding to checkout.',
+        status: 'Cart is empty',
+      };
+    }
 
-    // Clear cart items and reset cart total price
-    await this.databaseService.cartItem.deleteMany({
-      where: { cartId },
-    });
+    try {
+      // Create a transaction
+      const transaction = await this.databaseService.transaction.create({
+        data: {
+          user: { connect: { id: userId } },
+          cart: { connect: { id: cartId } },
+          transactionId: `txn_${Date.now()}`,
+          status: 'Completed',
+        },
+      });
 
-    await this.databaseService.cart.update({
-      where: { id: cartId },
-      data: { totalPrice: 0.0 },
-    });
+      // Clear cart items and reset cart total price
+      await this.databaseService.cartItem.deleteMany({
+        where: { cartId },
+      });
 
-    return {
-      transactionId: transaction.transactionId,
-      status: 'Purchase completed',
-    };
+      await this.databaseService.cart.update({
+        where: { id: cartId },
+        data: { totalPrice: 0.0 },
+      });
+
+      return {
+        transactionId: transaction.transactionId,
+        status: 'Purchase completed',
+      };
+    } catch (error) {
+      throw new BadRequestException(
+        `Failed to complete purchase: ${error.message}`,
+      );
+    }
   }
 }
