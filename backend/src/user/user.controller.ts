@@ -1,8 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 import { UserProfileDto } from './dto/user-profile.dto';
+import { UserLogoutDto } from './dto/user-logout.dto';
 
 @Controller('api/user')
 export class UserController {
@@ -14,8 +15,28 @@ export class UserController {
     return this.userService.getUserProfile(userProfileDto);
   }
 
-  // @Post()
-  // create(@Body() createUserDto: CreateUserDto) {
-  //   return this.userService.create(createUserDto);
-  // }
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  async logoutUser(@Body() userLogoutDto: UserLogoutDto, @Req() req: Request) {
+    // Extract token from Authorization header if present
+    const authHeader = req.headers['authorization'];
+    let token: string | undefined;
+
+    if (authHeader && typeof authHeader === 'string') {
+      // Authorization header format: "Bearer <token>"
+      token = authHeader.replace('Bearer ', '');
+    } else if (userLogoutDto.token) {
+      token = userLogoutDto.token;
+      console.log(token);
+    }
+
+    if (!token) {
+      return { status: 'error', message: 'Token is required' };
+    }
+
+    // Update the request body to include the token if it was provided in the header
+    const updatedLogoutDto = { ...userLogoutDto, token };
+
+    return this.userService.logoutUser(updatedLogoutDto);
+  }
 }
