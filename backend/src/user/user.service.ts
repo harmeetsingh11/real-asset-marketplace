@@ -1,26 +1,41 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { UserProfileDto } from './dto/user-profile.dto';
+// import { UserLogoutDto } from './dto/user-logout.dto';
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
+  constructor(private dataservice: DatabaseService) {}
 
-  findAll() {
-    return `This action returns all user`;
-  }
+  async getUserProfile(userProfileDto: UserProfileDto) {
+    let { userId } = userProfileDto;
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+    // Validate that userId is provided and is a number
+    if (!userId || isNaN(Number(userId))) {
+      throw new BadRequestException('Invalid User ID');
+    }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
+    // Convert userId to number if it's a string
+    if (typeof userId === 'string') {
+      userId = Number(userId);
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    const user = await this.dataservice.user.findUnique({
+      where: { id: userId },
+      select: { id: true, email: true },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return {
+      userId: user.id,
+      email: user.email,
+    };
   }
 }
