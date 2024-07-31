@@ -41,6 +41,13 @@ export class AssetService {
   async browseAssets(filters: BrowseAssetsDto) {
     const { category, priceRange } = filters;
 
+    // Validate that at least one filter is provided
+    if (!category && !priceRange) {
+      throw new BadRequestException(
+        'Please provide at least one filter: either category or priceRange.',
+      );
+    }
+
     const whereClause: any = {};
 
     if (category) {
@@ -61,7 +68,7 @@ export class AssetService {
 
     try {
       const assets = await this.dataservice.asset.findMany({
-        where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
+        where: whereClause,
         include: {
           images: true,
         },
