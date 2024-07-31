@@ -32,7 +32,7 @@ export class AssetService {
         },
       });
 
-      return { assetId: asset.id, status: 'success' };
+      return { assetId: asset.id, status: 'Asset listed successfully' };
     } catch (error) {
       throw new BadRequestException(`Failed to create asset: ${error.message}`);
     }
@@ -40,19 +40,28 @@ export class AssetService {
 
   async browseAssets(filters: BrowseAssetsDto) {
     const { category, priceRange } = filters;
-    const [minPrice, maxPrice] = priceRange
-      ? priceRange.split('-').map(Number)
-      : [0, Infinity];
+
+    const whereClause: any = {};
+
+    if (category) {
+      whereClause.category = {
+        equals: category.toLowerCase(),
+        mode: 'insensitive',
+      };
+    }
+
+    if (priceRange) {
+      const [minPrice, maxPrice] = priceRange.split('-').map(Number);
+      if (!whereClause.price) {
+        whereClause.price = {};
+      }
+      whereClause.price.gte = minPrice;
+      whereClause.price.lte = maxPrice;
+    }
 
     try {
       const assets = await this.dataservice.asset.findMany({
-        where: {
-          category: category || undefined,
-          price: {
-            gte: minPrice,
-            lte: maxPrice,
-          },
-        },
+        where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
         include: {
           images: true,
         },
