@@ -100,6 +100,11 @@ export class CartService {
       throw new NotFoundException('Cart not found');
     }
 
+    // If the cart is empty, return a specific message
+    if (cart.cartItems.length === 0) {
+      return { message: 'The cart is empty. Please add items to your cart.' };
+    }
+
     // Map cart items to the desired format
     const cartItems = cart.cartItems.map((item) => ({
       cartItemId: item.id,
