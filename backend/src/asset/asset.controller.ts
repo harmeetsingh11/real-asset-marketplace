@@ -1,14 +1,16 @@
 // AssetController
-import { Controller, Post, Get, Body, Query } from '@nestjs/common';
+import { Controller, Post, Get, Body, Query, UseGuards } from '@nestjs/common';
 import { AssetService } from './asset.service';
 import { CreateAssetDto } from './dto/create-asset.dto';
 import { BrowseAssetsDto } from './dto/browse-asset.dto';
 import { AssetDetailsDto } from './dto/asset-details.dto';
+import { JwtAuthGuard } from 'src/auth/auth.guard';
 
 @Controller('api/asset')
 export class AssetController {
   constructor(private readonly assetService: AssetService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post('list')
   async listAsset(@Body() createAssetDto: CreateAssetDto) {
     try {
@@ -18,6 +20,7 @@ export class AssetController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('browse')
   async browseAssets(@Query() filters: BrowseAssetsDto) {
     try {
@@ -27,6 +30,7 @@ export class AssetController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('details')
   async getAssetDetails(@Query() assetDetailsDto: AssetDetailsDto) {
     try {
