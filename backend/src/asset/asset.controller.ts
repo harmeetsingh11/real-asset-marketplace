@@ -5,7 +5,7 @@ import { CreateAssetDto } from './dto/create-asset.dto';
 import { BrowseAssetsDto } from './dto/browse-asset.dto';
 import { AssetDetailsDto } from './dto/asset-details.dto';
 
-@Controller('asset')
+@Controller('api/asset')
 export class AssetController {
   constructor(private readonly assetService: AssetService) {}
 
