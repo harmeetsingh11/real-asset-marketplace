@@ -7,6 +7,7 @@ import { AssetModule } from './asset/asset.module';
 import { CartModule } from './cart/cart.module';
 import { UserModule } from './user/user.module';
 import { WalletModule } from './wallet/wallet.module';
+import { TokenBlacklistModule } from './token-blacklist/token-blacklist.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { WalletModule } from './wallet/wallet.module';
     CartModule,
     UserModule,
     WalletModule,
+    TokenBlacklistModule,
   ],
   controllers: [AppController],
   providers: [AppService],
