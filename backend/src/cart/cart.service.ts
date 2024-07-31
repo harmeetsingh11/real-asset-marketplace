@@ -72,6 +72,16 @@ export class CartService {
   }
 
   async viewCart(userId: number) {
+    // Ensure userId is undefined
+    if (!userId) {
+      throw new NotFoundException('User ID is required');
+    }
+
+    // Convert userId to number if it's a string
+    if (typeof userId === 'string') {
+      userId = parseInt(userId, 10);
+    }
+
     // Find the user's cart and include cart items with asset details
     const cart = await this.databaseService.cart.findUnique({
       where: { userId },
