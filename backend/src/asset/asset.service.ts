@@ -92,7 +92,17 @@ export class AssetService {
   }
 
   async getAssetDetails(assetDetailsDto: AssetDetailsDto) {
-    const { assetId } = assetDetailsDto;
+    let { assetId } = assetDetailsDto;
+
+    // Convert assetId to number if it's a string
+    if (typeof assetId === 'string') {
+      assetId = parseInt(assetId, 10);
+    }
+
+    // Ensure assetId is valid
+    if (!assetId || isNaN(assetId)) {
+      throw new BadRequestException('Invalid Asset ID');
+    }
 
     try {
       const asset = await this.dataservice.asset.findUnique({
