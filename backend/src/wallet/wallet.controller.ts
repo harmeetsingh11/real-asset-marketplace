@@ -2,12 +2,13 @@ import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { WalletService } from './wallet.service';
 import { ConnectWalletDto } from './dto/connect-wallet.dto';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 @ApiTags('Wallet')
 @Controller('wallet')
 export class WalletController {
   constructor(private walletService: WalletService) {}
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post('connect')
   @ApiOperation({
