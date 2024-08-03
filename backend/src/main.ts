@@ -11,6 +11,7 @@ async function bootstrap() {
       'API documentation for the Real World Asset Marketplace, a platform for listing, browsing, and purchasing real-world assets using blockchain technology.',
     )
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
