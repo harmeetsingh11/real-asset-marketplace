@@ -11,8 +11,9 @@ export class AuthController {
 
   @Post('register')
   @ApiOperation({
-    description: 'To register a new user with email.',
-    summary: 'Register a new User with details',
+    description:
+      'This endpoint registers a new user by accepting an email and password, creating a new user account, and returning a user ID and authentication token.',
+    summary: 'Register a new user',
   })
   create(@Body() registerData: RegisterUserDto) {
     return this.authService.register(registerData);
@@ -20,8 +21,9 @@ export class AuthController {
 
   @Post('login')
   @ApiOperation({
-    description: 'Login using Email',
-    summary: 'Endpoint to Login with User Email and Password',
+    description:
+      'This endpoint authenticates a user by verifying their email and password, and returns a user ID and authentication token upon successful authentication.',
+    summary: 'Authenticate user',
   })
   login(@Body() loginData: LoginDto) {
     return this.authService.login(loginData);
