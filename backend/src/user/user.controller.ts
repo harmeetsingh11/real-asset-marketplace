@@ -5,7 +5,7 @@ import { JwtAuthGuard } from 'src/auth/auth.guard';
 import { UserProfileDto } from './dto/user-profile.dto';
 import { UserLogoutDto } from './dto/user-logout.dto';
 
-@Controller('api/user')
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

@@ -6,7 +6,7 @@ import { BrowseAssetsDto } from './dto/browse-asset.dto';
 import { AssetDetailsDto } from './dto/asset-details.dto';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 
-@Controller('api/asset')
+@Controller('asset')
 export class AssetController {
   constructor(private readonly assetService: AssetService) {}
 

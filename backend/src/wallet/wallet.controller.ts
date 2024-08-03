@@ -3,7 +3,7 @@ import { WalletService } from './wallet.service';
 import { ConnectWalletDto } from './dto/connect-wallet.dto';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 
-@Controller('api/wallet')
+@Controller('wallet')
 export class WalletController {
   constructor(private walletService: WalletService) {}
 
