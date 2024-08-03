@@ -7,6 +7,7 @@ export class UserLogoutDto {
   @IsString()
   userId: number;
 
+  @ApiProperty()
   @IsString()
   token?: string;
 }
