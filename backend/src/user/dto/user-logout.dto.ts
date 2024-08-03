@@ -1,10 +1,12 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class UserLogoutDto {
+  @ApiProperty()
   @IsNotEmpty()
   @IsString()
   userId: number;
 
   @IsString()
-  token?: string; // Optional if provided in the body
+  token?: string;
 }
