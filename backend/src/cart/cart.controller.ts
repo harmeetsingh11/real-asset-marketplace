@@ -3,12 +3,13 @@ import { CartService } from './cart.service';
 import { CreateCartItemDto } from './dto/create-cart.dto';
 import { CheckoutCartDto } from './dto/checkout-cart.dto';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 @ApiTags('Cart')
 @Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post('add')
   @ApiOperation({
@@ -20,6 +21,7 @@ export class CartController {
     return this.cartService.addToCart(createCartItemDto);
   }
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get('view')
   @ApiOperation({
@@ -31,6 +33,7 @@ export class CartController {
     return this.cartService.viewCart(userId);
   }
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post('checkout')
   @ApiOperation({
