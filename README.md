@@ -41,7 +41,7 @@
 
 6. **Start the Development Server:**
    ```bash
-   pnpx run start:dev
+   pnpm run start:dev
    ```
 
 7. **Make API Calls:**
