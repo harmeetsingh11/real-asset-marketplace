@@ -4,14 +4,15 @@ import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 import { UserProfileDto } from './dto/user-profile.dto';
 import { UserLogoutDto } from './dto/user-logout.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 @ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Get('profile')
+  @Post('profile')
   @ApiOperation({
     description:
       'This endpoint retrieves the profile information of a user by providing the user ID. It returns the user ID and email.',
@@ -21,6 +22,7 @@ export class UserController {
     return this.userService.getUserProfile(userProfileDto);
   }
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   @ApiOperation({
