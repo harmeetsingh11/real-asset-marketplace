@@ -1,10 +1,14 @@
 <script>
+  import Footer from '$lib/components/Footer.svelte';
   import Navbar from '$lib/components/Navbar.svelte';
   import { DarkMode } from 'flowbite-svelte';
 </script>
 
 <Navbar />
-<section class="bg-gray-50 dark:bg-gray-900 min-h-screen flex items-center">
+<section
+  class="bg-gray-50 dark:bg-gray-900 min-h-screen flex items-center relative bg-gradient-to-b from-primary-50 to-transparent dark:from-primary-900 w-full h-full top-0 left-0 z-0"
+  style="background-image: linear-gradient(to bottom, var(--tw-gradient-stops) 70%);"
+>
   <div
     class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 grid lg:grid-cols-2 gap-8 lg:gap-16"
   >
@@ -111,6 +115,7 @@
           >
           <div class="text-sm font-medium text-gray-900 dark:text-white">
             Not registered yet? <a
+              href="/register"
               class="text-primary-600 hover:underline dark:text-primary-500"
               >Create account</a
             >
@@ -120,3 +125,4 @@
     </div>
   </div>
 </section>
+<Footer />
