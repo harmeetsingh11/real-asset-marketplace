@@ -3,12 +3,12 @@
   import { ChartMixedDollarSolid } from 'flowbite-svelte-icons';
 </script>
 
-<nav class="bg-white border-gray-200 dark:bg-gray-900">
+<nav class="bg-white border-gray-200 dark:bg-gray-900 shadow-lg">
   <div
     class="flex flex-wrap items-center justify-between max-w-screen-xl mx-auto p-4"
   >
     <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-      <ChartMixedDollarSolid class="text-primary-500 w-8 h-8" />
+      <ChartMixedDollarSolid class="text-primary-500 w-10 h-10" />
       <span
         class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
         >RealAssetXchange</span
