@@ -3,11 +3,11 @@
 </script>
 
 <section
-  class="bg-white dark:bg-gray-900 relative bg-gradient-to-b from-primary-50 to-transparent dark:from-primary-900 w-full h-full top-0 left-0 z-0 p-10"
+  class="bg-white dark:bg-gray-800 relative bg-gradient-to-b from-primary-50 to-transparent dark:from-primary-900 w-full h-full top-0 left-0 z-0 p-10"
   style="background-image: linear-gradient(to bottom, var(--tw-gradient-stops) 100%);"
 >
   <div
-    class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-8 md:p-12 mb-8 shadow-md"
+    class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-8 md:p-12 mb-8 shadow-md"
   >
     <h1 class="mb-3 text-3xl">👋</h1>
     <h1
@@ -32,7 +32,7 @@
 
   <!-- ========= STATISTICS ======== -->
   <div
-    class="w-full bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 shadow-md"
+    class="w-full bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700 shadow-md"
   >
     <div class="sm:hidden">
       <label for="tabs" class="sr-only">Select tab</label>
