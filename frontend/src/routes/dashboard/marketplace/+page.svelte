@@ -1,5 +1,23 @@
 <script>
   import { FilterSolid } from 'flowbite-svelte-icons';
+  let inCart = false;
+  let quantity = 1;
+
+  function toggleCart() {
+    inCart = true;
+  }
+
+  function increaseQuantity() {
+    quantity += 1;
+  }
+
+  function decreaseQuantity() {
+    if (quantity > 1) {
+      quantity -= 1;
+    } else {
+      inCart = false;
+    }
+  }
 </script>
 
 <section
@@ -95,11 +113,34 @@
             <span class="text-3xl font-bold text-gray-900 dark:text-white"
               >$599</span
             >
-            <a
-              href="#"
-              class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-              >Add to cart</a
-            >
+
+            {#if !inCart}
+              <a
+                href="#"
+                on:click|preventDefault={toggleCart}
+                class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+              >
+                Add to Cart
+              </a>
+            {:else}
+              <div class="flex items-center space-x-3">
+                <button
+                  on:click={decreaseQuantity}
+                  class="bg-gray-200 text-gray-700 rounded-md p-2 hover:bg-gray-300"
+                >
+                  -
+                </button>
+                <span class="text-sm font-medium dark:text-white"
+                  >{quantity}</span
+                >
+                <button
+                  on:click={increaseQuantity}
+                  class="bg-gray-200 text-gray-700 rounded-md p-2 hover:bg-gray-300"
+                >
+                  +
+                </button>
+              </div>
+            {/if}
           </div>
         </div>
       </div>
