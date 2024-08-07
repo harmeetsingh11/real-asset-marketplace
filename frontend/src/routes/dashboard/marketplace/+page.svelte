@@ -80,7 +80,7 @@
       <!-- Placeholder for Assets -->
 
       <div
-        class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700"
+        class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 transition-transform duration-300 ease-in-out transform hover:scale-105 hover:translate-y-[-10px] hover:shadow-xl"
       >
         <!-- svelte-ignore a11y-img-redundant-alt -->
         <div class="flex items-center justify-center p-4">
