@@ -85,7 +85,7 @@
         <!-- svelte-ignore a11y-img-redundant-alt -->
         <div class="flex items-center justify-center p-4">
           <img
-            class="w-64 h-64 rounded-lg object-fill"
+            class="w-64 h-64 rounded-lg object-fill transition-all duration-300 cursor-pointer filter grayscale hover:grayscale-0"
             src="https://vintagecarforwedding.com/wp-content/uploads/2021/06/Honeyview__LAK8572-2.jpg"
             alt="product image"
           />
