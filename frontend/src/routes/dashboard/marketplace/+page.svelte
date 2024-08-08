@@ -29,7 +29,7 @@
     <h1
       class="text-4xl font-bold text-center text-gray-800 mb-8 dark:text-white"
     >
-      Browse and Buy: Your Asset Adventure Awaits! 🛒
+      Browse and Buy: Your Asset Adventure Awaits! 💎
     </h1>
 
     <!-- Search Bar -->
