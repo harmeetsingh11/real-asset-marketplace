@@ -84,7 +84,7 @@
             />
           </svelte:fragment>
         </SidebarItem>
-        <SidebarItem label="View Cart Items">
+        <SidebarItem label="View Cart Items" href="/dashboard/cart">
           <svelte:fragment slot="icon">
             <CartSolid
               class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
