@@ -1,4 +1,5 @@
 <script>
+  import { authStore } from '$lib/stores/authStore';
   import {
     Drawer,
     Button,
@@ -12,7 +13,7 @@
     ChartPieSolid,
     WalletSolid,
     CashSolid,
-    FilterSolid,
+    // @ts-ignore
     CartSolid,
     UserCircleSolid,
     LockSolid,
@@ -21,11 +22,18 @@
   import { sineIn } from 'svelte/easing';
 
   let hidden2 = true;
+  // @ts-ignore
   let spanClass = 'flex-1 ms-3 whitespace-nowrap';
   let transitionParams = {
     x: 320,
     duration: 200,
     easing: sineIn,
+  };
+
+  const handleLogout = () => {
+    authStore.logout();
+    localStorage.setItem('logoutSuccess', 'true');
+    window.location.href = '/login'; // Redirect to home page
   };
 </script>
 
@@ -98,7 +106,7 @@
             />
           </svelte:fragment>
         </SidebarItem>
-        <SidebarItem label="Logout">
+        <SidebarItem label="Logout" on:click={handleLogout}>
           <svelte:fragment slot="icon">
             <LockSolid
               class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
