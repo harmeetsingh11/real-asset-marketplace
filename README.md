@@ -1,4 +1,4 @@
-# Real Asset Marketplace
+# Real World Asset Marketplace (MVP)
 
 A real-world asset marketplace project developed during the Timechain Summer of Code internship program by Timechain Labs.
 
