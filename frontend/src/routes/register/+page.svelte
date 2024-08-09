@@ -1,7 +1,70 @@
 <script>
   import Footer from '$lib/components/Footer.svelte';
   import Navbar from '$lib/components/Navbar.svelte';
-  import { DarkMode } from 'flowbite-svelte';
+  import { onMount } from 'svelte';
+  import { FlatToast, ToastContainer, toasts } from 'svelte-toasts';
+
+  const showToast = (
+    /** @type {string} */ message,
+    /** @type {string} */ type
+  ) => {
+    toasts.add({
+      description: message,
+      duration: 2500, // duration
+      placement: 'top-right',
+      // @ts-ignore
+      type: type || 'info', // Fallback type
+      theme: 'dark',
+    });
+  };
+
+  onMount(() => {
+    const registerSuccess = localStorage.getItem('registerSuccess');
+    if (registerSuccess) {
+      showToast('Registered successfully! Please log in.', 'success');
+      localStorage.removeItem('registerSuccess'); // Clear the flag
+    }
+  });
+
+  // @ts-ignore
+  const handleRegister = async (event) => {
+    event.preventDefault();
+
+    const email = event.target.email.value;
+    const password = event.target.password.value;
+
+    try {
+      const response = await fetch('http://localhost:3000/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        showToast(
+          'Registration successful! Redirecting to login...',
+          'success'
+        );
+        setTimeout(() => {
+          localStorage.setItem('registerSuccess', 'true'); // Set the flag
+          window.location.href = '/login';
+        }, 2000); // Redirect after 1 second
+      } else {
+        const errorData = await response.json();
+        const errorMessage =
+          errorData.message || 'Registration failed due to an unknown error.';
+        showToast(`Registration failed: ${errorMessage}`, 'error');
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      // @ts-ignore
+      const errorMessage = error.message || 'An unexpected error occurred.';
+      showToast(`An error occurred: ${errorMessage}`, 'error');
+    }
+  };
 </script>
 
 <Navbar />
@@ -53,7 +116,7 @@
         <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
           Sign up for RealAssetXchange
         </h2>
-        <form class="mt-8 space-y-6" action="#">
+        <form class="mt-8 space-y-6" on:submit|preventDefault={handleRegister}>
           <div>
             <label
               for="email"
@@ -92,7 +155,6 @@
                 name="remember"
                 type="checkbox"
                 class="w-4 h-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:focus:ring-primary-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
-                required
               />
             </div>
             <div class="ms-3 text-sm">
@@ -125,4 +187,8 @@
     </div>
   </div>
 </section>
+<ToastContainer let:data>
+  <FlatToast {data} />
+  <!-- Provider template for your toasts -->
+</ToastContainer>
 <Footer />
