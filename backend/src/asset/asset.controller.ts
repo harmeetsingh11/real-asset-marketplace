@@ -6,6 +6,7 @@ import { BrowseAssetsDto } from './dto/browse-asset.dto';
 import { AssetDetailsDto } from './dto/asset-details.dto';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AssetsByUserDto } from './dto/asset-by-user';
 
 @ApiTags('Asset')
 @Controller('asset')
@@ -33,7 +34,7 @@ export class AssetController {
   @Get('browse')
   @ApiOperation({
     description:
-      'This endpoint allows users to browse listed assets. Users can apply filters to narrow down the search results. It returns a list of assets with basic details.',
+      'This endpoint allows users to browse listed assets by filter. Users can apply filters to narrow down the search results. It returns a list of assets with basic details.',
     summary: 'Browse assets',
   })
   async browseAssets(@Query() filters: BrowseAssetsDto) {
@@ -57,6 +58,23 @@ export class AssetController {
       return await this.assetService.getAssetDetails(assetDetailsDto);
     } catch (error) {
       throw new Error(`Error getting asset details: ${error.message}`);
+    }
+  }
+
+  // New endpoint to get all assets by userId
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Get('user-assets')
+  @ApiOperation({
+    description:
+      'This endpoint retrieves all assets associated with a specific user.',
+    summary: 'Get all assets by user ID',
+  })
+  async getAssetsByUser(@Query() assetByUser: AssetsByUserDto) {
+    try {
+      return await this.assetService.getAssetsByUser(assetByUser);
+    } catch (error) {
+      throw new Error(`Error getting user assets: ${error.message}`);
     }
   }
 }
