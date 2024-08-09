@@ -20,8 +20,12 @@ const createAuthStore = () => {
 
   return {
     subscribe,
-    login: (/** @type {any} */ userData) => {
-      const newState = { isLoggedIn: true, ...userData };
+    login: (/** @type {{ userId: number; token: string; }} */ userData) => {
+      const newState = {
+        isLoggedIn: true,
+        userId: userData.userId,
+        token: userData.token,
+      };
       set(newState);
 
       if (typeof localStorage !== 'undefined') {
@@ -29,7 +33,7 @@ const createAuthStore = () => {
       }
     },
     logout: () => {
-      const newState = { isLoggedIn: false };
+      const newState = { isLoggedIn: false, userId: null, token: null };
       set(newState);
 
       if (typeof localStorage !== 'undefined') {
