@@ -1,6 +1,34 @@
-### Instructions for Setting Up the Project Locally
+# Real Asset Marketplace
 
-#### Backend Setup
+A real-world asset marketplace project developed during the Timechain Summer of Code internship program by Timechain Labs.
+
+## Instructions for Setting Up the Project Locally
+
+### Frontend Setup
+
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/harmeetsingh11/real-asset-marketplace.git
+   ```
+
+2. **Navigate to the Frontend Directory:**
+   ```bash
+   cd real-asset-marketplace/frontend
+   ```
+
+3. **Install Dependencies:**
+   ```bash
+   pnpm install
+   ```
+
+4. **Run the Development Server:**
+   ```bash
+   pnpm run dev --open
+   ```
+
+   This will start the frontend development server and open the application in your default web browser.
+
+### Backend Setup
 
 1. **Clone the Repository:**
    ```bash
@@ -25,13 +53,13 @@
      DATABASE_URL="postgresql://postgres:<YOUR PGADMIN PASSWORD>@localhost:5432/<YOUR DATABASE NAME>?schema=public"
      JWT_SECRET="<YOUR JWT SECRET>"
      ```
-        - Sample `.env` file
 
-        ```
-        DATABASE_URL="postgresql://postgres:mysecretpassword@localhost:5432/mydatabase?schema=public"
-        JWT_SECRET="mysecretjwt"
+     **Sample `.env` file:**
 
-        ```
+     ```
+     DATABASE_URL="postgresql://postgres:mysecretpassword@localhost:5432/mydatabase?schema=public"
+     JWT_SECRET="mysecretjwt"
+     ```
 
 5. **Run Prisma Migrations:**
    - This will create the database and all the tables as per the Prisma schema.
