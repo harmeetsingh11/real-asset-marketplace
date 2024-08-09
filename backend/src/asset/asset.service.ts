@@ -9,6 +9,7 @@ import { CreateAssetDto } from './dto/create-asset.dto';
 import { BrowseAssetsDto } from './dto/browse-asset.dto';
 import { AssetDetailsDto } from './dto/asset-details.dto';
 import { DatabaseService } from 'src/database/database.service';
+import { AssetsByUserDto } from './dto/asset-by-user';
 
 @Injectable()
 export class AssetService {
@@ -126,6 +127,33 @@ export class AssetService {
       throw new BadRequestException(
         `Failed to get asset details: ${error.message}`,
       );
+    }
+  }
+
+  // method to get all assets by userId
+  async getAssetsByUser(assetsByUser: AssetsByUserDto) {
+    let { userId } = assetsByUser;
+
+    // Convert UserId to number if it's a string
+    if (typeof userId === 'string') {
+      userId = parseInt(userId, 10);
+    }
+    try {
+      const assets = await this.dataservice.asset.findMany({
+        where: { userId },
+        include: { images: true },
+      });
+
+      return assets.map((asset) => ({
+        assetId: asset.id,
+        assetName: asset.name,
+        description: asset.description,
+        price: asset.price,
+        category: asset.category,
+        images: asset.images.map((image) => image.url),
+      }));
+    } catch (error) {
+      throw new BadRequestException(`Failed to get assets: ${error.message}`);
     }
   }
 }
