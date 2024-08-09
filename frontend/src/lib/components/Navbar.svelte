@@ -2,8 +2,17 @@
   import { DarkMode } from 'flowbite-svelte';
   import { ChartMixedDollarSolid } from 'flowbite-svelte-icons';
   import SidebarComponent from './Sidebar.svelte';
+  import { authStore } from '$lib/stores/authStore';
 
-  let loggedIn = true;
+  /**
+   * @type {boolean}
+   */
+  let loggedIn;
+
+  // Subscribe to authStore
+  authStore.subscribe((auth) => {
+    loggedIn = auth.isLoggedIn;
+  });
 </script>
 
 <nav class="bg-white border-gray-200 dark:bg-gray-900 shadow-lg">
