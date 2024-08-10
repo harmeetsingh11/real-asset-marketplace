@@ -58,7 +58,7 @@
         showToast(`Login failed: ${errorMessage}`, 'error');
       }
     } catch (error) {
-      console.error('Login error:', error);
+      // console.error('Login error:', error);
       // @ts-ignore
       const errorMessage = error.message || 'An unexpected error occurred.';
       showToast(`An error occurred: ${errorMessage}`, 'error');
