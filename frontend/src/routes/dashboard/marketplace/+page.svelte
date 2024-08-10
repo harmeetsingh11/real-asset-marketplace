@@ -4,6 +4,7 @@
   import { get } from 'svelte/store';
   import { authStore } from '$lib/stores/authStore';
   import { FilterSolid } from 'flowbite-svelte-icons';
+  import { FlatToast, ToastContainer, toasts } from 'svelte-toasts';
 
   let inCart = false;
   let quantity = 1;
@@ -15,6 +16,16 @@
 
   // Retrieve userId from the authStore
   const { userId, token } = get(authStore);
+
+  const showToast = (message, type) => {
+    toasts.add({
+      description: message,
+      duration: 2500, // duration
+      placement: 'top-right',
+      type: type || 'info', // Fallback type
+      theme: 'dark',
+    });
+  };
 
   async function fetchAssets() {
     if (!userId) {
@@ -72,19 +83,48 @@
     fetchAssets();
   });
 
-  function toggleCart() {
-    inCart = !inCart;
-  }
+  // function toggleCart() {
+  //   inCart = !inCart;
+  // }
 
-  function increaseQuantity() {
-    quantity += 1;
-  }
+  // function increaseQuantity() {
+  //   quantity += 1;
+  // }
 
-  function decreaseQuantity() {
-    if (quantity > 1) {
-      quantity -= 1;
-    } else {
-      inCart = false;
+  // function decreaseQuantity() {
+  //   if (quantity > 1) {
+  //     quantity -= 1;
+  //   } else {
+  //     inCart = false;
+  //   }
+  // }
+
+  async function addToCart(assetId) {
+    try {
+      const response = await fetch('http://localhost:3000/cart/add', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId,
+          assetId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add product to cart');
+      }
+
+      const result = await response.json();
+
+      // Show toast message for success
+      showToast('Product added to your cart!', 'success');
+
+      inCart = true;
+    } catch (err) {
+      showToast(`Failed to add product to cart. ${err.message}`, 'error');
     }
   }
 </script>
@@ -206,15 +246,15 @@
                   >
                     ${asset.price}
                   </span>
-                  {#if !inCart}
-                    <a
-                      href="#"
-                      on:click|preventDefault={toggleCart}
-                      class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                    >
-                      Add to Cart
-                    </a>
-                  {:else}
+                  <!-- {#if !inCart} -->
+                  <a
+                    href="#"
+                    on:click|preventDefault={() => addToCart(asset.assetId)}
+                    class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                  >
+                    Add to Cart
+                  </a>
+                  <!-- {:else}
                     <div class="flex items-center space-x-3">
                       <button
                         on:click={decreaseQuantity}
@@ -232,7 +272,7 @@
                         +
                       </button>
                     </div>
-                  {/if}
+                  {/if} -->
                 </div>
               </div>
             </div>
@@ -241,4 +281,8 @@
       </div>
     </div>
   </main>
+  <ToastContainer let:data>
+    <FlatToast {data} />
+    <!-- Provider template for your toasts -->
+  </ToastContainer>
 </section>
