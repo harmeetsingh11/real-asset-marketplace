@@ -12,7 +12,6 @@
   let error = null;
   let selectedCategory = '';
   let selectedPriceRange = '';
-  let priceRangeLimits = { min: 0, max: 0 };
 
   // Retrieve userId from the authStore
   const { userId, token } = get(authStore);
@@ -63,6 +62,12 @@
     });
   }
 
+  function clearFilters() {
+    selectedCategory = '';
+    selectedPriceRange = '';
+    filteredAssets = assets; // Reset to show all assets
+  }
+
   onMount(() => {
     fetchAssets();
   });
@@ -110,10 +115,10 @@
       <!-- Filters -->
       <div class="flex justify-end items-center mb-6 space-x-4">
         <button
-          class="bg-primary-600 text-white text-sm font-medium rounded-lg p-2.5 flex gap-1"
-          on:click={applyFilters}
+          class="bg-primary-600 text-white text-sm font-medium rounded-lg p-2.5 flex gap-1 hover:bg-primary-800 dark:hover:bg-primary-700"
+          on:click={clearFilters}
         >
-          <FilterSolid />Filter
+          <FilterSolid />Clear Filter
         </button>
 
         <select
