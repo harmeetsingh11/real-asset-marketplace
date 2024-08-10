@@ -1,14 +1,44 @@
 <script>
-  import { UserSettingsSolid } from 'flowbite-svelte-icons';
+  // @ts-nocheck
 
-  let userId = '123456789';
-  let email = 'user@example.com';
+  import { onMount } from 'svelte';
+  import { authStore } from '$lib/stores/authStore';
+  import { get } from 'svelte/store';
+
+  let userId = '';
+  let email = '';
   let currentPassword = '';
   let newPassword = '';
   let confirmPassword = '';
 
+  // Fetch user profile on component mount
+  onMount(async () => {
+    try {
+      const { userId: authUserId, token } = get(authStore);
+
+      // Call the API to fetch user profile
+      const response = await fetch(`http://localhost:3000/user/profile`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ userId: authUserId }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        userId = data.userId; // Update the userId variable
+        email = data.email; // Update the email variable
+      } else {
+        console.error('Failed to fetch user profile:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  });
+
   function handleChangePassword() {
-    // Add your password change logic here
     console.log('Change password clicked');
   }
 </script>
@@ -29,12 +59,13 @@
           fill="currentColor"
           viewBox="0 0 20 20"
           xmlns="http://www.w3.org/2000/svg"
-          ><path
+        >
+          <path
             fill-rule="evenodd"
             d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
             clip-rule="evenodd"
-          ></path></svg
-        >
+          ></path>
+        </svg>
       </div>
 
       <div>
