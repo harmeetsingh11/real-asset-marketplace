@@ -1,16 +1,18 @@
 <script>
   // @ts-nocheck
-
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
-  import { authStore } from '$lib/stores/authStore'; // Adjust the import path as needed
+  import { authStore } from '$lib/stores/authStore';
   import { FilterSolid } from 'flowbite-svelte-icons';
-  // import { toast } from 'svelte-toasts'; // Assuming you use svelte-toasts for notifications
 
   let inCart = false;
   let quantity = 1;
   let assets = [];
+  let filteredAssets = []; // New state to store filtered assets
   let error = null;
+  let selectedCategory = '';
+  let selectedPriceRange = '';
+  let priceRangeLimits = { min: 0, max: 0 };
 
   // Retrieve userId from the authStore
   const { userId, token } = get(authStore);
@@ -36,10 +38,29 @@
       }
 
       assets = await response.json();
+      filteredAssets = assets; // Initially show all assets
     } catch (err) {
       error = err.message;
       console.log(`Error: ${err.message}`);
     }
+  }
+
+  function applyFilters() {
+    filteredAssets = assets.filter((asset) => {
+      // Filter by category if selected
+      let categoryMatch = selectedCategory
+        ? asset.category === selectedCategory
+        : true;
+
+      // Filter by price range if selected
+      let priceMatch = true;
+      if (selectedPriceRange) {
+        const [min, max] = selectedPriceRange.split('-').map(Number);
+        priceMatch = asset.price >= min && asset.price <= max;
+      }
+
+      return categoryMatch && priceMatch;
+    });
   }
 
   onMount(() => {
@@ -90,10 +111,15 @@
       <div class="flex justify-end items-center mb-6 space-x-4">
         <button
           class="bg-primary-600 text-white text-sm font-medium rounded-lg p-2.5 flex gap-1"
-          ><FilterSolid />Filter</button
+          on:click={applyFilters}
         >
+          <FilterSolid />Filter
+        </button>
+
         <select
           class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 p-2.5"
+          bind:value={selectedCategory}
+          on:change={applyFilters}
         >
           <option value="">Select Category</option>
           <option value="Real Estate">Real Estate</option>
@@ -108,13 +134,15 @@
 
         <select
           class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 p-2.5"
+          bind:value={selectedPriceRange}
+          on:change={applyFilters}
         >
           <option value="">Price Range</option>
           <option value="0-1000">$0 - $1,000</option>
           <option value="1000-10000">$1,000 - $10,000</option>
           <option value="10000-50000">$10,000 - $50,000</option>
           <option value="50000-70000">$50,000 - $70,000</option>
-          <option value="70000-70000">$70,000 - $110,000</option>
+          <option value="70000-110000">$70,000 - $110,000</option>
         </select>
       </div>
 
@@ -124,7 +152,7 @@
       >
         {#if error}
           <p class="text-center text-red-500">{error}</p>
-        {:else if assets.length === 0}
+        {:else if filteredAssets.length === 0}
           <div
             class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 mx-auto mt-12 w-full max-w-3xl text-center col-span-full border border-red-300 dark:border-red-500"
           >
@@ -133,7 +161,7 @@
             menu.
           </div>
         {:else}
-          {#each assets as asset}
+          {#each filteredAssets as asset}
             <div
               class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 transition-transform duration-300 ease-in-out transform hover:scale-105 hover:translate-y-[-10px] hover:shadow-xl"
             >
