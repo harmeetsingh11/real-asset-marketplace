@@ -4,11 +4,25 @@ import { RegisterUserDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+/**
+ * AuthController
+ * 
+ * Handles user authentication and registration endpoints.
+ */
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  /**
+   * Registers a new user.
+   * 
+   * Accepts registration details (email and password), creates a new user account, 
+   * and returns a user ID along with an authentication token.
+   * 
+   * @param registerData - The registration data containing email and password.
+   * @returns User ID and authentication token.
+   */
   @Post('register')
   @ApiOperation({
     description:
@@ -19,6 +33,15 @@ export class AuthController {
     return this.authService.register(registerData);
   }
 
+  /**
+   * Authenticates a user.
+   * 
+   * Verifies the user's email and password, and returns a user ID along with an authentication token 
+   * if authentication is successful.
+   * 
+   * @param loginData - The login data containing email and password.
+   * @returns User ID and authentication token.
+   */
   @Post('login')
   @ApiOperation({
     description:

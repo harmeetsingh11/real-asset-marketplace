@@ -15,6 +15,13 @@ export class UserService {
     private tokenBlacklistService: TokenBlacklistService,
   ) {}
 
+  /**
+   * Retrieves user profile information.
+   * @param userProfileDto - DTO containing the user ID.
+   * @returns The user's ID and email.
+   * @throws BadRequestException if the user ID is invalid.
+   * @throws NotFoundException if the user is not found.
+   */
   async getUserProfile(userProfileDto: UserProfileDto) {
     let { userId } = userProfileDto;
 
@@ -43,6 +50,12 @@ export class UserService {
     };
   }
 
+  /**
+   * Logs out a user by invalidating their token.
+   * @param userLogoutDto - DTO containing the user ID and token.
+   * @returns A success status message.
+   * @throws NotFoundException if the user is not found.
+   */
   async logoutUser(userLogoutDto: UserLogoutDto) {
     const { userId, token } = userLogoutDto;
 

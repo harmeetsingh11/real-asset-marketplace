@@ -10,10 +10,18 @@ import { ConnectWalletDto } from './dto/connect-wallet.dto';
 export class WalletService {
   constructor(private readonly dataservice: DatabaseService) {}
 
+  /**
+   * Connects a blockchain wallet to a user account.
+   * 
+   * @param connectWalletDto - The data transfer object containing user ID and wallet address.
+   * @returns A confirmation object containing wallet ID and status message.
+   * @throws NotFoundException - If the user is not found.
+   * @throws BadGatewayException - If the wallet address is already connected or if the user already has a connected wallet.
+   */
   async connectWallet(connectWalletDto: ConnectWalletDto) {
     const { userId, walletAddress } = connectWalletDto;
 
-    // Check if user exists
+    // Check if the user exists
     const user = await this.dataservice.user.findUnique({
       where: {
         id: userId,
@@ -23,7 +31,7 @@ export class WalletService {
       throw new NotFoundException('User not found');
     }
 
-    // Check if wallet address already exists
+    // Check if the wallet address is already connected
     const existingWallet = await this.dataservice.wallet.findFirst({
       where: {
         address: walletAddress,

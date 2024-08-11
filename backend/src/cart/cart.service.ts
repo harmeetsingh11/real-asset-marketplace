@@ -11,6 +11,13 @@ import { DatabaseService } from 'src/database/database.service';
 export class CartService {
   constructor(private readonly databaseService: DatabaseService) {}
 
+  /**
+   * Adds an item to the user's cart.
+   * 
+   * @param createCartItemDto - Data Transfer Object containing userId and assetId.
+   * @returns The cart ID and status message.
+   * @throws NotFoundException - If the user or asset is not found.
+   */
   async addToCart(createCartItemDto: CreateCartItemDto) {
     const { userId, assetId } = createCartItemDto;
 
@@ -75,8 +82,15 @@ export class CartService {
     return { cartId: cart.id, status: 'Item added to cart' };
   }
 
+  /**
+   * Retrieves the contents of the user's cart.
+   * 
+   * @param userId - ID of the user whose cart is to be viewed.
+   * @returns Cart items and total price, or a message if the cart is empty.
+   * @throws NotFoundException - If the user ID is missing or the cart is not found.
+   */
   async viewCart(userId: number) {
-    // Ensure userId is undefined
+    // Ensure userId is provided
     if (!userId) {
       throw new NotFoundException('User ID is required');
     }
@@ -116,6 +130,14 @@ export class CartService {
     return { cartItems, totalPrice: cart.totalPrice };
   }
 
+  /**
+   * Completes the purchase and checks out the cart.
+   * 
+   * @param checkoutCartDto - Data Transfer Object containing userId and cartId.
+   * @returns Transaction ID and status message.
+   * @throws NotFoundException - If the cart is not found or access is denied.
+   * @throws BadRequestException - If the purchase fails.
+   */
   async checkoutCart(checkoutCartDto: CheckoutCartDto) {
     const { userId, cartId } = checkoutCartDto;
 
