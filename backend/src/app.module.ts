@@ -9,6 +9,9 @@ import { UserModule } from './user/user.module';
 import { WalletModule } from './wallet/wallet.module';
 import { TokenBlacklistModule } from './token-blacklist/token-blacklist.module';
 
+/**
+ * Main application module that imports and provides all necessary modules and components.
+ */
 @Module({
   imports: [
     DatabaseModule,
