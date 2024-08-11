@@ -1,6 +1,9 @@
 # Real World Asset Marketplace (MVP)
 
-A real-world asset marketplace project developed during the Timechain Summer of Code internship program by Timechain Labs.
+This repository contains the development of a Minimum Viable Product (MVP) for a real-world asset marketplace. 
+This platform will allow users to connect their blockchain wallets, list assets at a price, and enable other users to browse assets in categories, add them to a cart, and purchase them.
+
+The entire outline for this project can be accessed through this [link.](https://drive.google.com/file/d/18JRwLiICyrvQhhDxngVKHinSzo8EqSMj/view?usp=sharing)
 
 ## Instructions for Setting Up the Project Locally
 
