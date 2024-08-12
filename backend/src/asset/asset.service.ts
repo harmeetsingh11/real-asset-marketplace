@@ -156,4 +156,26 @@ export class AssetService {
       throw new BadRequestException(`Failed to get assets: ${error.message}`);
     }
   }
+
+  // method to get all assets listed by all the users
+  async getAllAssets() {
+    try {
+      const assets = await this.dataservice.asset.findMany({
+        include: { images: true },
+      });
+
+      return assets.map((asset) => ({
+        assetId: asset.id,
+        assetName: asset.name,
+        description: asset.description,
+        price: asset.price,
+        category: asset.category,
+        images: asset.images.map((image) => image.url),
+      }));
+    } catch (error) {
+      throw new BadRequestException(
+        `Failed to get all assets: ${error.message}`,
+      );
+    }
+  }
 }
