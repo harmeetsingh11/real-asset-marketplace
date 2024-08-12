@@ -52,7 +52,7 @@
           'success'
         );
         setTimeout(() => {
-          window.location.href = '/dashboard/marketplace';
+          window.location.href = '/marketplace';
         }, 2000);
         return result; // { assetId, status }
       } else {
