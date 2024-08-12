@@ -30,6 +30,18 @@
     <div
       class="flex items-center md:order-2 space-x-4 md:space-x-2 rtl:space-x-reverse"
     >
+      <a
+        href="/"
+        class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-base px-5 py-3 md:px-5 md:py-2.5 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
+      >
+        Home
+      </a>
+      <a
+        href="/marketplace"
+        class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-base px-5 py-3 md:px-5 md:py-2.5 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
+      >
+        Explore Marketplace
+      </a>
       {#if loggedIn}
         <SidebarComponent /> <!-- Show sidebar when user is logged in -->
       {:else}
