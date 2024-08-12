@@ -77,4 +77,20 @@ export class AssetController {
       throw new Error(`Error getting user assets: ${error.message}`);
     }
   }
+
+  // New route to get all assets
+  // @ApiBearerAuth()
+  // @UseGuards(JwtAuthGuard)
+  @Get('all')
+  @ApiOperation({
+    description: 'This endpoint retrieves all assets listed by all users.',
+    summary: 'Get all assets',
+  })
+  async getAllAssets() {
+    try {
+      return await this.assetService.getAllAssets();
+    } catch (error) {
+      throw new Error(`Error getting all assets: ${error.message}`);
+    }
+  }
 }
