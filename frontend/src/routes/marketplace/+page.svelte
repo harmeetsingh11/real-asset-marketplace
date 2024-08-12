@@ -3,54 +3,50 @@
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
   import { authStore } from '$lib/stores/authStore';
-  import { FilterSolid } from 'flowbite-svelte-icons';
   import { FlatToast, ToastContainer, toasts } from 'svelte-toasts';
   import Navbar from '$lib/components/Navbar.svelte';
   import Footer from '$lib/components/Footer.svelte';
+  import { FilterSolid } from 'flowbite-svelte-icons';
 
   let inCart = false;
   let quantity = 1;
   let assets = [];
-  let filteredAssets = []; // New state to store filtered assets
+  let filteredAssets = [];
   let error = null;
   let selectedCategory = '';
   let selectedPriceRange = '';
-
-  // Retrieve userId from the authStore
-  const { userId, token } = get(authStore);
 
   const showToast = (message, type) => {
     toasts.add({
       description: message,
       duration: 2500, // duration
       placement: 'top-right',
-      type: type || 'info', // Fallback type
+      type: type || 'info',
       theme: 'dark',
     });
   };
 
-  async function fetchAssets() {
-    if (!userId) {
-      error = 'User not authenticated';
-      return;
-    }
+  let loggedIn;
 
+  // Subscribe to authStore
+  authStore.subscribe((auth) => {
+    loggedIn = auth.isLoggedIn;
+  });
+
+  async function fetchAssets() {
     try {
-      const response = await fetch(
-        `http://localhost:3000/asset/user-assets?userId=${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const response = await fetch('http://localhost:3000/asset/all', {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
       if (!response.ok) {
         throw new Error('Failed to fetch assets');
       }
 
       assets = await response.json();
-      filteredAssets = assets; // Initially show all assets
+      filteredAssets = assets;
     } catch (err) {
       error = err.message;
       console.log(`Error: ${err.message}`);
@@ -59,12 +55,10 @@
 
   function applyFilters() {
     filteredAssets = assets.filter((asset) => {
-      // Filter by category if selected
       let categoryMatch = selectedCategory
         ? asset.category === selectedCategory
         : true;
 
-      // Filter by price range if selected
       let priceMatch = true;
       if (selectedPriceRange) {
         const [min, max] = selectedPriceRange.split('-').map(Number);
@@ -78,39 +72,30 @@
   function clearFilters() {
     selectedCategory = '';
     selectedPriceRange = '';
-    filteredAssets = assets; // Reset to show all assets
+    filteredAssets = assets;
   }
 
   onMount(() => {
     fetchAssets();
   });
 
-  // function toggleCart() {
-  //   inCart = !inCart;
-  // }
-
-  // function increaseQuantity() {
-  //   quantity += 1;
-  // }
-
-  // function decreaseQuantity() {
-  //   if (quantity > 1) {
-  //     quantity -= 1;
-  //   } else {
-  //     inCart = false;
-  //   }
-  // }
-
   async function addToCart(assetId) {
+    const { userId, token } = get(authStore);
+
+    if (!loggedIn) {
+      showToast('Please log in to add items to your cart', 'info');
+      return;
+    }
+
     try {
       const response = await fetch('http://localhost:3000/cart/add', {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          userId,
+          userId, // Pass userId to the request body
           assetId,
         }),
       });
@@ -120,10 +105,7 @@
       }
 
       const result = await response.json();
-
-      // Show toast message for success
       showToast('Product added to your cart!', 'success');
-
       inCart = true;
     } catch (err) {
       showToast(`Failed to add product to cart. ${err.message}`, 'error');
@@ -251,13 +233,27 @@
                     ${asset.price}
                   </span>
                   <!-- {#if !inCart} -->
-                  <a
-                    href="#"
-                    on:click|preventDefault={() => addToCart(asset.assetId)}
-                    class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                  >
-                    Add to Cart
-                  </a>
+                  {#if !loggedIn}
+                    <a
+                      href="#"
+                      on:click|preventDefault={() =>
+                        showToast(
+                          'Please log in to proceed with buying',
+                          'error'
+                        )}
+                      class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                    >
+                      Buy
+                    </a>
+                  {:else}
+                    <a
+                      href="#"
+                      on:click|preventDefault={() => addToCart(asset.assetId)}
+                      class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                    >
+                      Add to Cart
+                    </a>
+                  {/if}
                   <!-- {:else}
                       <div class="flex items-center space-x-3">
                         <button
