@@ -1,10 +1,25 @@
 # Real World Asset Marketplace (MVP)
 
-A real-world asset marketplace project developed during the Timechain Summer of Code internship program by Timechain Labs.
+Welcome to the repository for the Minimum Viable Product (MVP) of the Real World Asset Marketplace. This platform enables users to connect blockchain wallets, list assets for sale, browse categorized assets, add them to a cart, and complete purchases.
 
-## Instructions for Setting Up the Project Locally
+## Project Overview
 
-### Frontend Setup
+This project was developed during the **Timechain Summer of Code 2024 Sprint/Upskilling Phase**. The entire project outline can be accessed [here](https://drive.google.com/file/d/18JRwLiICyrvQhhDxngVKHinSzo8EqSMj/view?usp=sharing).
+
+## Table of Contents
+- [Project Overview](#project-overview)
+- [Frontend Setup](#frontend-setup)
+- [Backend Setup](#backend-setup)
+- [Contributors](#contributors)
+
+## Frontend Setup
+
+### Prerequisites
+Ensure you have the following installed:
+- [Node.js](https://nodejs.org/)
+- [pnpm](https://pnpm.io/)
+
+### Steps
 
 1. **Clone the Repository:**
    ```bash
@@ -28,7 +43,16 @@ A real-world asset marketplace project developed during the Timechain Summer of 
 
    This will start the frontend development server and open the application in your default web browser.
 
-### Backend Setup
+
+## Backend Setup
+
+### Prerequisites
+Ensure you have the following installed:
+- [Node.js](https://nodejs.org/)
+- [pnpm](https://pnpm.io/)
+- [PostgreSQL](https://www.postgresql.org/)
+
+### Steps
 
 1. **Clone the Repository:**
    ```bash
@@ -74,3 +98,11 @@ A real-world asset marketplace project developed during the Timechain Summer of 
 
 7. **Make API Calls:**
    - With the server running, you can now make API calls to the available endpoints.
+
+
+## Contributors:
+<tr>
+  <td align="center"><a href="https://github.com/harmeetsingh1)"><kbd><img src="https://avatars3.githubusercontent.com/harmeetsingh11?size=100" width="100px;" alt=""/>
+  <td align="center"><a href="https://github.com/Praneesh-Sharma"><kbd><img src="https://avatars3.githubusercontent.com/Praneesh-Sharma?size=100" width="100px;" alt=""/>
+  <td align="center"><a href="https://github.com/sudip2217"><kbd><img src="https://avatars3.githubusercontent.com/sudip2217?size=100" width="100px;" alt=""/>
+</tr>
