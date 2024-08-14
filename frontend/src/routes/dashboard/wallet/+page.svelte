@@ -1,5 +1,15 @@
 <script>
+  // @ts-nocheck
+
   import { Accordion, AccordionItem } from 'flowbite-svelte';
+  import { invalidate } from '$app/navigation';
+  import { createEventDispatcher } from 'svelte';
+
+  const dispatch = createEventDispatcher();
+
+  let email = '';
+  let password = '';
+  export let form;
 </script>
 
 <section
@@ -125,7 +135,7 @@
         <div
           class="w-full max-w-md bg-white sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700"
         >
-          <form class="space-y-6" action="#">
+          <form class="space-y-6" method="post" action="?/login">
             <h5 class="text-xl font-medium text-gray-900 dark:text-white">
               Sign in to Metamask
             </h5>
@@ -138,6 +148,7 @@
               <input
                 type="email"
                 name="email"
+                bind:value={email}
                 id="email"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                 placeholder="name@company.com"
@@ -154,6 +165,7 @@
                 type="password"
                 name="password"
                 id="password"
+                bind:value={password}
                 placeholder="••••••••"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                 required
@@ -167,7 +179,6 @@
                     type="checkbox"
                     value=""
                     class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
-                    required
                   />
                 </div>
                 <label
@@ -655,4 +666,9 @@
       >
     </div>
   </div>
+  {#if form?.success}
+    <!-- this message is ephemeral; it exists because the page was rendered in
+     response to a form submission. it will vanish if the user reloads -->
+    <p class="pt-2">Logged In. Your balance is {form?.balance}!</p>
+  {/if}
 </section>
