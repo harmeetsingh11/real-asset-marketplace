@@ -4,12 +4,58 @@
   import { Accordion, AccordionItem } from 'flowbite-svelte';
   import { invalidate } from '$app/navigation';
   import { createEventDispatcher } from 'svelte';
+  import { toasts, ToastContainer, FlatToast } from 'svelte-toasts';
 
   const dispatch = createEventDispatcher();
+
+  const showToast = (
+    /** @type {string} */ message,
+    /** @type {string} */ type
+  ) => {
+    toasts.add({
+      // title: 'Login Status',
+      description: message,
+      duration: 2500, // duration
+      placement: 'top-right',
+      // @ts-ignore
+      type: type || 'info', // Fallback type
+      theme: 'dark',
+    });
+  };
 
   let email = '';
   let password = '';
   export let form;
+  // Handle the form submission manually to show toast messages
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const form = new FormData(event.target);
+
+    const response = await fetch('?/login', {
+      method: 'POST',
+      body: form,
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log('Data from server:', result);
+
+      if (result.DefaultWalletBalance) {
+        showToast(
+          `Login successful! Wallet Balance: ${JSON.stringify(result.DefaultWalletBalance)}`,
+          { type: 'success' }
+        );
+      } else {
+        console.error('DefaultWalletBalance not found');
+        showToast(`Login successful, but wallet balance not found.`, {
+          type: 'info',
+        });
+      }
+    } else {
+      const error = await response.json();
+      showToast(`Login failed: ${error.error}`, 'error');
+    }
+  };
 </script>
 
 <section
@@ -135,7 +181,7 @@
         <div
           class="w-full max-w-md bg-white sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700"
         >
-          <form class="space-y-6" method="post" action="?/login">
+          <form class="space-y-6" on:submit={handleSubmit}>
             <h5 class="text-xl font-medium text-gray-900 dark:text-white">
               Sign in to Metamask
             </h5>
@@ -671,4 +717,8 @@
      response to a form submission. it will vanish if the user reloads -->
     <p class="pt-2">Logged In. Your balance is {form?.balance}!</p>
   {/if}
+  <ToastContainer let:data>
+    <FlatToast {data} />
+    <!-- Provider template for your toasts -->
+  </ToastContainer>
 </section>
