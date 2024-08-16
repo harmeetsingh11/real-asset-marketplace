@@ -25,10 +25,13 @@ export const actions = {
       // For Default wallet balance
       const DefaultWalletBalance = await walletModule.getWalletBalance({});
       console.log('Default Wallet Balance:', DefaultWalletBalance);
-      if (loginResponse.status_code == 200) {
+      if (loginResponse.status_code === 200) {
         return {
           status: 200,
-          body: { loginResponse, DefaultWalletBalance },
+          body: {
+            loginResponse,
+            DefaultWalletBalance: DefaultWalletBalance.data.balance,
+          },
         };
       }
     } catch (error) {
