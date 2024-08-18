@@ -1,13 +1,12 @@
-// @ts-nocheck
 import NeucronSDK from 'neucron-sdk';
 
 export const actions = {
-  login: async ({ request }) => {
+  signup: async ({ request }) => {
     const data = await request.formData();
-    const email = data.get('email');
-    const password = data.get('password');
+    const walletEmail = data.get('walletEmail');
+    const walletPassword = data.get('walletPassword');
 
-    if (!email || !password) {
+    if (!walletEmail || !walletPassword) {
       return {
         status: 400,
         body: { error: 'Email and password are required.' },
@@ -19,26 +18,34 @@ export const actions = {
       const authModule = neucron.authentication;
       const walletModule = neucron.wallet;
 
-      const loginResponse = await authModule.login({ email, password });
-      console.log('Login response:', loginResponse);
+      const signUpResponse = await authModule.signUp({
+        email: walletEmail,
+        password: walletPassword,
+      });
 
-      // For Default wallet balance
-      const DefaultWalletBalance = await walletModule.getWalletBalance({});
-      console.log('Default Wallet Balance:', DefaultWalletBalance);
-      if (loginResponse.status_code === 200) {
+      if (signUpResponse.status_code === 200) {
+        // Assuming the signUpResponse contains walletAddress and paymailId
+        const walletAddress = signUpResponse.data.walletAddress;
+        const paymailId = signUpResponse.data.paymailId;
+
         return {
-          status: 200,
-          body: {
-            loginResponse,
-            DefaultWalletBalance: DefaultWalletBalance.data.balance,
-          },
+          success: true,
+          walletAddress,
+          paymailId,
+          walletEmail,
+          walletPassword,
+        };
+      } else {
+        return {
+          status: signUpResponse.status_code,
+          body: { error: signUpResponse.message },
         };
       }
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('Signup failed:', error);
       return {
         status: 500,
-        body: { error: 'Login failed. Please try again.' },
+        body: { error: 'Signup failed. Please try again.' },
       };
     }
   },
