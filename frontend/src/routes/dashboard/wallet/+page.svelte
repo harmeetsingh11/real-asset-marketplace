@@ -13,7 +13,7 @@
   ) => {
     toasts.add({
       description: message,
-      duration: 2500, // duration
+      duration: 10000, // duration
       placement: 'top-right',
       // @ts-ignore
       type: type || 'info', // Fallback type
@@ -28,7 +28,7 @@
         'success'
       );
     } else if (form?.error) {
-      showToast(`Error: ${form.error}`, 'error');
+      showToast(`Error: ${form?.error}`, 'error');
     }
   });
 </script>
