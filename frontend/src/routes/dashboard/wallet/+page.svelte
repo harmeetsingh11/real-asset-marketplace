@@ -3,7 +3,7 @@
 
   import { Accordion, AccordionItem } from 'flowbite-svelte';
   import { invalidate } from '$app/navigation';
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import { toasts, ToastContainer, FlatToast } from 'svelte-toasts';
 
   const dispatch = createEventDispatcher();
@@ -23,42 +23,132 @@
     });
   };
 
-  let email = '';
-  let password = '';
-  export let form;
-  // Handle the form submission manually to show toast messages
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const form = new FormData(event.target);
-
-    const response = await fetch('?/login', {
-      method: 'POST',
-      body: form,
-    });
-
-    if (response.ok) {
-      const result = await response.json();
-      console.log('Data from server:', result);
-
-      if (result.DefaultWalletBalance) {
-        showToast(
-          `Login successful! Wallet Balance: ${JSON.stringify(result.DefaultWalletBalance)}`,
-          { type: 'success' }
-        );
-      } else {
-        console.error('DefaultWalletBalance not found');
-        showToast(`Login successful, but wallet balance not found.`, {
-          type: 'info',
-        });
-      }
-    } else {
-      const error = await response.json();
-      showToast(`Login failed: ${error.error}`, 'error');
+  onMount(() => {
+    if (form.success) {
+      showToast(
+        `Login successful. Your default wallet balance: ${form?.balance}`,
+        'success'
+      );
     }
-  };
+  });
+
+  let walletEmail = '';
+  let walletPassword = '';
+  export let form;
 </script>
 
 <section
+  class="bg-white dark:bg-gray-800 relative bg-gradient-to-b from-primary-50 to-transparent dark:from-primary-900 w-full h-full top-0 left-0 z-0 p-12 flex items-center justify-center"
+  style="background-image: linear-gradient(to bottom, var(--tw-gradient-stops) 70%);"
+>
+  <div
+    class="w-full max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow-md sm:p-6 dark:bg-gray-800 dark:border-gray-700"
+  >
+    <h5 class="mb-4 text-4xl dark:text-white text-center">🗃️</h5>
+    <h5
+      class="mb-3 text-base font-semibold text-gray-900 md:text-xl dark:text-white text-center"
+    >
+      SignUp for Neucron wallet
+    </h5>
+    <p class="text-sm font-normal text-gray-500 dark:text-gray-400 text-center">
+      Connect with one of our available wallet providers or create a new one.
+    </p>
+
+    <div
+      class="w-full max-w-md bg-white sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700"
+    >
+      <form class="space-y-6" action="?/signup" method="post">
+        <div>
+          <label
+            for="email"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Wallet email</label
+          >
+          <input
+            type="email"
+            name="walletEmail"
+            bind:value={walletEmail}
+            id="email"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+            placeholder="name@company.com"
+            required
+          />
+        </div>
+        <div>
+          <label
+            for="password"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Wallet password</label
+          >
+          <input
+            type="password"
+            name="walletPassword"
+            id="password"
+            bind:value={walletPassword}
+            placeholder="••••••••"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+            required
+          />
+        </div>
+        <div class="flex items-start">
+          <div class="flex items-start">
+            <div class="flex items-center h-5">
+              <input
+                id="remember"
+                type="checkbox"
+                value=""
+                class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
+              />
+            </div>
+            <label
+              for="remember"
+              class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+              >Remember me</label
+            >
+          </div>
+          <a
+            href="#"
+            class="ms-auto text-sm text-primary-700 hover:underline dark:text-primary-500"
+            >Lost Password?</a
+          >
+        </div>
+        <button
+          type="submit"
+          class="w-full text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+          >Create wallet</button
+        >
+      </form>
+    </div>
+    <div>
+      <a
+        href="#"
+        class="inline-flex items-center text-xs font-normal text-gray-500 hover:underline dark:text-gray-400"
+      >
+        <svg
+          class="w-3 h-3 me-2"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 20 20"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M7.529 7.988a2.502 2.502 0 0 1 5 .191A2.441 2.441 0 0 1 10 10.582V12m-.01 3.008H10M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+          />
+        </svg>
+        Why do I need to connect with my wallet?</a
+      >
+    </div>
+  </div>
+  {#if form?.success}
+    <p class="pt-2">Logged In. Your balance is {form?.balance}!</p>
+  {/if}
+</section>
+
+<!-- <section
   class="bg-white dark:bg-gray-800 relative bg-gradient-to-b from-primary-50 to-transparent dark:from-primary-900 w-full h-full top-0 left-0 z-0 p-12 flex items-center justify-center"
   style="background-image: linear-gradient(to bottom, var(--tw-gradient-stops) 70%);"
 >
@@ -181,7 +271,7 @@
         <div
           class="w-full max-w-md bg-white sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700"
         >
-          <form class="space-y-6" on:submit={handleSubmit}>
+          <form class="space-y-6" action="?/login" method="post">
             <h5 class="text-xl font-medium text-gray-900 dark:text-white">
               Sign in to Metamask
             </h5>
@@ -713,12 +803,12 @@
     </div>
   </div>
   {#if form?.success}
-    <!-- this message is ephemeral; it exists because the page was rendered in
-     response to a form submission. it will vanish if the user reloads -->
-    <p class="pt-2">Logged In. Your balance is {form?.balance}!</p>
-  {/if}
-  <ToastContainer let:data>
-    <FlatToast {data} />
-    <!-- Provider template for your toasts -->
-  </ToastContainer>
-</section>
+    <!-this message is ephemeral; it exists because the page was rendered in -->
+<!-- response to a form submission. it will vanish if the user reloads -->
+<!-- <p class="pt-2">Logged In. Your balance is {form?.balance}!</p> -->
+<!-- <ToastContainer let:data>
+      <FlatToast {data} /> -->
+<!-- Provider template for your toasts -->
+<!-- </ToastContainer>
+  {/if} -->
+<!-- </section> -->
