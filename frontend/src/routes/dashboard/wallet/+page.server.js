@@ -23,10 +23,11 @@ export const actions = {
         password: walletPassword,
       });
 
+      console.log(signUpResponse);
       if (signUpResponse.status_code === 200) {
         // Assuming the signUpResponse contains walletAddress and paymailId
-        const walletAddress = signUpResponse.data.walletAddress;
-        const paymailId = signUpResponse.data.paymailId;
+        const walletAddress = signUpResponse.data.wallet_address;
+        const paymailId = signUpResponse.data.paymail_id;
 
         return {
           success: true,
