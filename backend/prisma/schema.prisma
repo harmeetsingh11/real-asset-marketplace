@@ -18,10 +18,13 @@ model User {
 }
 
 model Wallet {
-  id      Int    @id @default(autoincrement())
-  address String @unique
-  user    User   @relation(fields: [userId], references: [id])
-  userId  Int    @unique
+  id             Int    @id @default(autoincrement())
+  walletEmail    String
+  walletPassword String
+  paymailId      String @unique
+  address        String @unique
+  user           User   @relation(fields: [userId], references: [id])
+  userId         Int    @unique
 }
 
 model Asset {
