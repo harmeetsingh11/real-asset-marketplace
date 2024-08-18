@@ -1,19 +1,17 @@
 <script>
   // @ts-nocheck
+  import { onMount } from 'svelte';
+  import { FlatToast, ToastContainer, toasts } from 'svelte-toasts';
 
-  import { Accordion, AccordionItem } from 'flowbite-svelte';
-  import { invalidate } from '$app/navigation';
-  import { createEventDispatcher, onMount } from 'svelte';
-  import { toasts, ToastContainer, FlatToast } from 'svelte-toasts';
-
-  const dispatch = createEventDispatcher();
+  let walletEmail = '';
+  let walletPassword = '';
+  export let form;
 
   const showToast = (
     /** @type {string} */ message,
     /** @type {string} */ type
   ) => {
     toasts.add({
-      // title: 'Login Status',
       description: message,
       duration: 2500, // duration
       placement: 'top-right',
@@ -24,17 +22,12 @@
   };
 
   onMount(() => {
-    if (form.success) {
-      showToast(
-        `Login successful. Your default wallet balance: ${form?.balance}`,
-        'success'
-      );
+    if (form?.success) {
+      showToast('Wallet created successfully!', 'success');
+    } else if (form?.error) {
+      showToast(`Error: ${form.error}`, 'error');
     }
   });
-
-  let walletEmail = '';
-  let walletPassword = '';
-  export let form;
 </script>
 
 <section
@@ -143,9 +136,17 @@
       >
     </div>
   </div>
+
   {#if form?.success}
-    <p class="pt-2">Logged In. Your balance is {form?.balance}!</p>
+    <p class="pt-2">
+      Wallet created successfully! Your wallet address is {form.walletAddress} and
+      your paymail ID is {form.paymailId}.
+    </p>
   {/if}
+
+  <ToastContainer let:data>
+    <FlatToast {data} />
+  </ToastContainer>
 </section>
 
 <!-- <section
