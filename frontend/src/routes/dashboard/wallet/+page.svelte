@@ -23,7 +23,10 @@
 
   onMount(() => {
     if (form?.success) {
-      showToast('Wallet created successfully!', 'success');
+      showToast(
+        `Wallet created successfully with PaymailId: ${form?.paymailId} `,
+        'success'
+      );
     } else if (form?.error) {
       showToast(`Error: ${form.error}`, 'error');
     }
@@ -136,13 +139,6 @@
       >
     </div>
   </div>
-
-  {#if form?.success}
-    <p class="pt-2">
-      Wallet created successfully! Your wallet address is {form.walletAddress} and
-      your paymail ID is {form.paymailId}.
-    </p>
-  {/if}
 
   <ToastContainer let:data>
     <FlatToast {data} />
