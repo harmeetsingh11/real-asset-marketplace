@@ -1,67 +1,59 @@
 import {
-  BadGatewayException,
+  ConflictException,
+  HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { CreateWalletDto } from './dto/create-wallet.dto';
 import { DatabaseService } from 'src/database/database.service';
-import { ConnectWalletDto } from './dto/connect-wallet.dto';
 
 @Injectable()
 export class WalletService {
   constructor(private readonly dataservice: DatabaseService) {}
+  async createWallet(createWalletDto: CreateWalletDto) {
+    const { walletEmail, walletPassword, paymailId, address, userId } =
+      createWalletDto;
 
-  /**
-   * Connects a blockchain wallet to a user account.
-   * 
-   * @param connectWalletDto - The data transfer object containing user ID and wallet address.
-   * @returns A confirmation object containing wallet ID and status message.
-   * @throws NotFoundException - If the user is not found.
-   * @throws BadGatewayException - If the wallet address is already connected or if the user already has a connected wallet.
-   */
-  async connectWallet(connectWalletDto: ConnectWalletDto) {
-    const { userId, walletAddress } = connectWalletDto;
+    try {
+      // Check if a wallet already exists for the given userId
+      const existingWallet = await this.dataservice.wallet.findUnique({
+        where: { userId },
+      });
 
-    // Check if the user exists
-    const user = await this.dataservice.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
-    if (!user) {
-      throw new NotFoundException('User not found');
+      if (existingWallet) {
+        throw new HttpException(
+          'A wallet is already associated with this user.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      // Create a new wallet record
+      const wallet = await this.dataservice.wallet.create({
+        data: {
+          walletEmail,
+          walletPassword,
+          paymailId,
+          address,
+          userId,
+        },
+      });
+
+      return wallet;
+    } catch (error) {
+      // Detailed error handling
+      if (error instanceof NotFoundException) {
+        throw error; // Rethrow known errors
+      }
+
+      if (error.code === 'P2002') {
+        throw new ConflictException(
+          'Wallet address or paymail ID already exists',
+        );
+      }
+
+      console.error('Detailed Error:', error);
+      throw new Error('Failed to create wallet. Please try again.');
     }
-
-    // Check if the wallet address is already connected
-    const existingWallet = await this.dataservice.wallet.findFirst({
-      where: {
-        address: walletAddress,
-      },
-    });
-    if (existingWallet) {
-      throw new BadGatewayException('Wallet address already connected');
-    }
-
-    // Check if the user already has a connected wallet
-    const userWallet = await this.dataservice.wallet.findFirst({
-      where: {
-        userId: userId,
-      },
-    });
-    if (userWallet) {
-      throw new BadGatewayException('User already has a connected wallet');
-    }
-
-    // Connect the wallet
-    const wallet = await this.dataservice.wallet.create({
-      data: {
-        userId: userId,
-        address: walletAddress,
-      },
-    });
-
-    return {
-      walletId: wallet.id,
-      status: 'Wallet connected successfully',
-    };
   }
 }
