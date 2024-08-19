@@ -13,7 +13,7 @@ export class CartService {
 
   /**
    * Adds an item to the user's cart.
-   * 
+   *
    * @param createCartItemDto - Data Transfer Object containing userId and assetId.
    * @returns The cart ID and status message.
    * @throws NotFoundException - If the user or asset is not found.
@@ -84,7 +84,7 @@ export class CartService {
 
   /**
    * Retrieves the contents of the user's cart.
-   * 
+   *
    * @param userId - ID of the user whose cart is to be viewed.
    * @returns Cart items and total price, or a message if the cart is empty.
    * @throws NotFoundException - If the user ID is missing or the cart is not found.
@@ -105,7 +105,13 @@ export class CartService {
       where: { userId },
       include: {
         cartItems: {
-          include: { asset: true },
+          include: {
+            asset: {
+              include: {
+                user: true, // Ensure asset includes user details
+              },
+            },
+          },
         },
       },
     });
@@ -119,12 +125,28 @@ export class CartService {
       return { message: 'The cart is empty. Please add items to your cart.' };
     }
 
-    // Map cart items to the desired format
+    // Fetch paymail IDs for users associated with assets
+    const userIds = Array.from(
+      new Set(cart.cartItems.map((item) => item.asset.user.id)),
+    );
+    const wallets = await this.databaseService.wallet.findMany({
+      where: { userId: { in: userIds } },
+    });
+
+    // Map user IDs to paymail IDs
+    const paymailMap = new Map();
+    wallets.forEach((wallet) => {
+      paymailMap.set(wallet.userId, wallet.paymailId);
+    });
+    // console.log('Paymail Map:', Array.from(paymailMap.entries()));
+
+    // Map cart items to the desired format with paymail IDs
     const cartItems = cart.cartItems.map((item) => ({
       cartItemId: item.id,
       assetId: item.asset.id,
       assetName: item.asset.name,
       price: item.asset.price,
+      paymailId: paymailMap.get(item.asset.user.id) || 'N/A',
     }));
 
     return { cartItems, totalPrice: cart.totalPrice };
@@ -132,7 +154,7 @@ export class CartService {
 
   /**
    * Completes the purchase and checks out the cart.
-   * 
+   *
    * @param checkoutCartDto - Data Transfer Object containing userId and cartId.
    * @returns Transaction ID and status message.
    * @throws NotFoundException - If the cart is not found or access is denied.
