@@ -54,6 +54,7 @@
 
       if (response.ok) {
         const data = await response.json();
+        console.log('Fetched Cart Items:', data.cartItems); // Log fetched d
 
         // Group items by assetId
         const groupedItems = {};
@@ -63,6 +64,7 @@
           } else {
             groupedItems[item.assetId] = {
               assetId: item.assetId,
+              paymailId: item.paymailId,
               qty: 1,
             };
           }
@@ -80,6 +82,7 @@
                 category: details.category,
                 imageUrl: details.images[0] || 'default-image-url.jpg',
                 qty: groupedItems[assetId].qty,
+                paymailId: groupedItems[assetId].paymailId,
               };
             }
           }
@@ -130,9 +133,12 @@
               {item.assetName}
             </h2>
             <p class="text-lg font-semibold text-gray-900 dark:text-gray-300">
-              ${(item.price * item.qty).toFixed(2)}
+              {(item.price * item.qty).toFixed(2)} SAT
             </p>
           </div>
+          <p class="text-gray-600 dark:text-gray-400 text-sm">
+            Paymail ID: {item.paymailId}
+          </p>
           <p
             class="bg-primary-100 text-primary-800 text-sm inline-block font-medium mb-1 px-2.5 py-0.5 rounded-sm dark:bg-primary-900 dark:text-primary-300"
           >
@@ -142,7 +148,7 @@
             Quantity: {item.qty}
           </p>
           <p class="text-gray-600 dark:text-gray-400 text-sm">
-            Unit Price: ${item.price.toFixed(2)}
+            Unit Price: {item.price.toFixed(2)} SAT
           </p>
         </div>
       </div>
@@ -153,7 +159,7 @@
       class="flex items-center justify-between p-4 bg-white dark:text-gray-300 dark:bg-gray-900"
     >
       <p class="text-lg font-semibold text-gray-900 dark:text-gray-300">
-        Subtotal ({cartItems.length} Items): ${subtotal.toFixed(2)}
+        Subtotal ({cartItems.length} Items): {subtotal.toFixed(2)} SAT
       </p>
 
       <button
