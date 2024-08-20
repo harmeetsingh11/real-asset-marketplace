@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { DatabaseService } from 'src/database/database.service';
+import { WalletByUserDto } from './dto/get-wallet.dto';
 
 @Injectable()
 export class WalletService {
@@ -54,6 +55,40 @@ export class WalletService {
 
       console.error('Detailed Error:', error);
       throw new Error('Failed to create wallet. Please try again.');
+    }
+  }
+
+  // Method to get all wallets by userId
+  async getWalletsByUser(walletByUserDto: WalletByUserDto) {
+    let { userId } = walletByUserDto;
+
+    // Convert UserId to number if it's a string
+    if (typeof userId === 'string') {
+      userId = parseInt(userId, 10);
+    }
+
+    try {
+      const wallets = await this.dataservice.wallet.findMany({
+        where: { userId },
+      });
+
+      if (wallets.length === 0) {
+        throw new NotFoundException('No wallet found, please create a wallet.');
+      }
+
+      return wallets.map((wallet) => ({
+        walletId: wallet.id,
+        walletEmail: wallet.walletEmail,
+        walletPassword: wallet.walletPassword,
+        paymailId: wallet.paymailId,
+        address: wallet.address,
+      }));
+    } catch (error) {
+      // Detailed error handling
+      if (error instanceof NotFoundException) {
+        throw error; // Rethrow known errors
+      }
+      throw new NotFoundException(`Failed to get wallets: ${error.message}`);
     }
   }
 }
