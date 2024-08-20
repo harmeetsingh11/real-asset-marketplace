@@ -5,12 +5,16 @@ import {
   UseGuards,
   HttpException,
   HttpStatus,
+  Get,
+  Query,
+  NotFoundException,
 } from '@nestjs/common';
 import { WalletService } from './wallet.service';
 // import { ConnectWalletDto } from './dto/connect-wallet.dto';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateWalletDto } from './dto/create-wallet.dto';
+import { WalletByUserDto } from './dto/get-wallet.dto';
 
 @ApiTags('Wallet')
 @Controller('wallet')
@@ -52,6 +56,26 @@ export class WalletController {
         },
         error.status || HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+
+  // New endpoint to get wallet details by userId
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Get('get')
+  @ApiOperation({
+    description:
+      'This endpoint retrieves wallet details associated with a specific user.',
+    summary: 'Get wallet details by user ID',
+  })
+  async getWalletByUser(@Query() walletByUserDto: WalletByUserDto) {
+    try {
+      return await this.walletService.getWalletsByUser(walletByUserDto);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return { message: error.message };
+      }
+      throw error;
     }
   }
 }
