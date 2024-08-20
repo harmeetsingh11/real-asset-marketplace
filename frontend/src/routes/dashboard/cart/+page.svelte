@@ -6,6 +6,7 @@
   import { authStore } from '$lib/stores/authStore';
   import { get } from 'svelte/store';
 
+  export let items = [];
   let cartItems = [];
   let subtotal = 0;
 
@@ -54,7 +55,7 @@
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Fetched Cart Items:', data.cartItems); // Log fetched d
+        // console.log('Fetched Cart Items:', data.cartItems); // Log fetched d
 
         // Group items by assetId
         const groupedItems = {};
@@ -162,12 +163,22 @@
         Subtotal ({cartItems.length} Items): {subtotal.toFixed(2)} SAT
       </p>
 
-      <button
+      <!-- <button
         class="bg-primary-700 text-white py-2 px-6 rounded-lg hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300"
         ><div class="flex gap-1">
           <CartOutline /> Proceed to Checkout
         </div></button
-      >
+      > -->
+      <form action="?/pay" method="post">
+        <input type="hidden" name="items" value={JSON.stringify(cartItems)} />
+        <button
+          type="submit"
+          class="bg-primary-700 text-white py-2 px-6 rounded-lg hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300"
+          ><div class="flex gap-1">
+            <CartOutline /> Proceed to Checkout
+          </div></button
+        >
+      </form>
     </div>
   {/if}
 </section>
