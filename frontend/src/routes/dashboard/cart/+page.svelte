@@ -5,10 +5,24 @@
   import { onMount } from 'svelte';
   import { authStore } from '$lib/stores/authStore';
   import { get } from 'svelte/store';
+  import { toasts, ToastContainer, FlatToast } from 'svelte-toasts';
 
   export let items = [];
   let cartItems = [];
   let subtotal = 0;
+
+  const showToast = (
+    /** @type {string} */ message,
+    /** @type {string} */ type
+  ) => {
+    toasts.add({
+      description: message,
+      duration: 10000, // duration
+      placement: 'top-right',
+      type: type || 'info', // Fallback type
+      theme: 'dark',
+    });
+  };
 
   // Function to fetch asset details
   async function fetchAssetDetails(assetId, token) {
@@ -104,6 +118,28 @@
       console.error('Error fetching cart items:', error);
     }
   });
+
+  async function handlePayment() {
+    try {
+      const response = await fetch('/dashboard/cart/pay', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ items: cartItems }),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        showToast('Payment successful'), 'success';
+        // Redirect or show success message
+      } else {
+        showToast(`Payment failed. ${result.message}`, 'error');
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+    }
+  }
 </script>
 
 <section
@@ -163,13 +199,14 @@
         Subtotal ({cartItems.length} Items): {subtotal.toFixed(2)} SAT
       </p>
 
-      <!-- <button
+      <button
+        on:click={handlePayment}
         class="bg-primary-700 text-white py-2 px-6 rounded-lg hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300"
         ><div class="flex gap-1">
           <CartOutline /> Proceed to Checkout
         </div></button
-      > -->
-      <form action="?/pay" method="post">
+      >
+      <!-- <form action="?/pay" method="post">
         <input type="hidden" name="items" value={JSON.stringify(cartItems)} />
         <button
           type="submit"
@@ -178,7 +215,11 @@
             <CartOutline /> Proceed to Checkout
           </div></button
         >
-      </form>
+      </form> -->
     </div>
   {/if}
+  <ToastContainer let:data>
+    <FlatToast {data} />
+    <!-- Provider template for your toasts -->
+  </ToastContainer>
 </section>
