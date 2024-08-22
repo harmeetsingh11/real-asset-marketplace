@@ -6,7 +6,7 @@ import { parse } from 'cookie';
 export async function POST({ request }) {
   try {
     // Parse the JSON body
-    const { items } = await request.json();
+    const { items, userCartId } = await request.json();
 
     // Extract cookie header from the request
     const cookieHeader = request.headers.get('cookie') || '';
