@@ -149,7 +149,7 @@ export class CartService {
       paymailId: paymailMap.get(item.asset.user.id) || 'N/A',
     }));
 
-    return { cartItems, totalPrice: cart.totalPrice };
+    return { cartId: cart.id, cartItems, totalPrice: cart.totalPrice };
   }
 
   /**
