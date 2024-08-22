@@ -10,6 +10,7 @@
   export let items = [];
   let cartItems = [];
   let subtotal = 0;
+  let userCartId = null;
 
   const showToast = (
     /** @type {string} */ message,
@@ -69,7 +70,9 @@
 
       if (response.ok) {
         const data = await response.json();
-        // console.log('Fetched Cart Items:', data.cartItems); // Log fetched d
+        userCartId = data.cartId;
+        // console.log('Fetched Cart Items:', data.cartItems);
+        // console.log('Fetch Cart Id:', data.cartId);
 
         // Group items by assetId
         const groupedItems = {};
@@ -126,7 +129,7 @@
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ items: cartItems }),
+        body: JSON.stringify({ items: cartItems, userCartId: userCartId }),
       });
 
       const result = await response.json();
