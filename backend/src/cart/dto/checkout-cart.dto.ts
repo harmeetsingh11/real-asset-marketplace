@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 
 export class CheckoutCartDto {
   @ApiProperty()
@@ -9,4 +9,8 @@ export class CheckoutCartDto {
   @ApiProperty()
   @IsNumber()
   cartId: number;
+
+  @ApiProperty()
+  @IsString()
+  transactionId: string;
 }
