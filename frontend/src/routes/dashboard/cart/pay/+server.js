@@ -103,21 +103,42 @@ export async function POST({ request }) {
     console.log(paymentResponse);
 
     if (paymentResponse.success) {
-      return json(
+      const transactionId = paymentResponse.data.txid;
+
+      // Call the checkout endpoint
+      const checkoutResponse = await fetch(
+        'http://localhost:3000/cart/checkout',
         {
-          message: 'Payment successful',
-          transactionId: paymentResponse.transactionId,
-        },
-        { status: 200 }
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ userId, cartId: userCartId, transactionId }),
+        }
       );
+
+      const checkoutResult = await checkoutResponse.json();
+
+      if (checkoutResponse.ok) {
+        return json({
+          message: 'Payment and checkout successful',
+          transactionId: checkoutResult.transactionId,
+          status: checkoutResult.status,
+        });
+      } else {
+        return json(
+          { message: `Checkout failed. ${checkoutResult.message}` },
+          { status: 500 }
+        );
+      }
     } else {
       return json(
-        { message: `Payment failed', ${paymentResponse.error}` },
+        { message: `Payment failed. ${paymentResponse.error}` },
         { status: 500 }
       );
     }
   } catch (err) {
-    // console.error('Payment error:', err);
     throw error(500, `Internal Server Error ${err}`);
   }
 }
