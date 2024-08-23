@@ -134,13 +134,20 @@
 
       const result = await response.json();
       if (response.ok) {
-        showToast('Payment successful'), 'success';
+        showToast(
+          `Payment successful. Transaction ID: ${result.transactionId}`,
+          'success'
+        );
         // Redirect or show success message
+        setTimeout(() => {
+          window.location.href = '/marketplace';
+        }, 2000);
       } else {
         showToast(`Payment failed. ${result.message}`, 'error');
       }
     } catch (error) {
       console.error('Payment error:', error);
+      showToast(`Payment failed due to an unexpected error: ${error}`, 'error');
     }
   }
 </script>
