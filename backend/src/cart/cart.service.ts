@@ -155,13 +155,13 @@ export class CartService {
   /**
    * Completes the purchase and checks out the cart.
    *
-   * @param checkoutCartDto - Data Transfer Object containing userId and cartId.
+   * @param checkoutCartDto - Data Transfer Object containing userId, cartId, and transactionId.
    * @returns Transaction ID and status message.
    * @throws NotFoundException - If the cart is not found or access is denied.
    * @throws BadRequestException - If the purchase fails.
    */
   async checkoutCart(checkoutCartDto: CheckoutCartDto) {
-    const { userId, cartId } = checkoutCartDto;
+    const { userId, cartId, transactionId } = checkoutCartDto;
 
     // Validate cart existence
     const cart = await this.databaseService.cart.findUnique({
@@ -183,12 +183,12 @@ export class CartService {
     }
 
     try {
-      // Create a transaction
+      // Create a transaction using the passed transactionId
       const transaction = await this.databaseService.transaction.create({
         data: {
           user: { connect: { id: userId } },
           cart: { connect: { id: cartId } },
-          transactionId: `txn_${Date.now()}`,
+          transactionId: transactionId || `txn_${Date.now()}`, // Use passed transactionId or generate a new one
           status: 'Completed',
         },
       });
