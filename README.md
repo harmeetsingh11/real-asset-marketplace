@@ -2,15 +2,27 @@
 
 Welcome to the repository for the Minimum Viable Product (MVP) of the Real World Asset Marketplace. This platform enables users to connect blockchain wallets, list assets for sale, browse categorized assets, add them to a cart, and complete purchases.
 
+
+## Table of Contents
+- [Project Overview](#project-overview)
+- [Tech Stack](#tech-stack)
+- [Frontend Setup](#frontend-setup)
+- [Backend Setup](#backend-setup)
+- [Contributors](#contributors)
+
 ## Project Overview
 
 This project was developed during the **Timechain Summer of Code 2024 Sprint/Upskilling Phase**. The entire project outline can be accessed [here](https://drive.google.com/file/d/18JRwLiICyrvQhhDxngVKHinSzo8EqSMj/view?usp=sharing).
 
-## Table of Contents
-- [Project Overview](#project-overview)
-- [Frontend Setup](#frontend-setup)
-- [Backend Setup](#backend-setup)
-- [Contributors](#contributors)
+## Tech Stack
+![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![NestJS](https://img.shields.io/badge/nestjs-%23E0234E.svg?style=for-the-badge&logo=nestjs&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)
+![Svelte](https://img.shields.io/badge/svelte-%23f1413d.svg?style=for-the-badge&logo=svelte&logoColor=white)
+![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)
+![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
 
 ## Frontend Setup
 
@@ -97,7 +109,8 @@ Ensure you have the following installed:
    ```
 
 7. **Make API Calls:**
-   - With the server running, you can now make API calls to the available endpoints.
+
+   - With the server running, you can make API calls to the available endpoints using the Swagger documentation available at `http://localhost:3000/api`.
 
 
 ## Contributors:
