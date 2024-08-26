@@ -2,6 +2,8 @@
 
 Welcome to the repository for the Minimum Viable Product (MVP) of the Real World Asset Marketplace. This platform enables users to connect blockchain wallets, list assets for sale, browse categorized assets, add them to a cart, and complete purchases.
 
+![localhost-5173-login](https://github.com/user-attachments/assets/b3e1effe-4605-43eb-91df-273b7aa8f4b6)
+
 
 ## Table of Contents
 - [Project Overview](#project-overview)
